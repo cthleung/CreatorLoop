@@ -43,6 +43,6 @@ Swapping out the model turned out to be the wrong move for me. I think the more 
 1. Log those choices as proper records, which is the next thing I'll build.
 2. Use them to rerank the AI's options, so the one I'd probably pick comes first.
 3. Once there's enough clean history, train a small LoRA adapter on the approved outputs and the picked-over-not-picked pairs, so the habits that show up across every scene get learned instead of reminded.
-4. Try it on a local model on my Mac with MLX, which also tests how much of this can run on the device itself.
+4. Try it on a local model on my Mac with MLX, which also tests how much of this can run on the device itself. I've started on that one: [a first run](../evals/results/2026-11-03-local-mlx.md) put Gemma 4 12B on my MacBook Air as the voice reader, and it matched Claude on 38 of 42 lines of the blind test, but with a median 151 seconds to the first token, so the on-device question for me is mostly about speed now.
 
 And none of it ships into my own workflow until the evals in [evaluation.md](evaluation.md) say it beats what I have now.

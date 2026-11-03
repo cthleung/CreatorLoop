@@ -19,7 +19,7 @@ flag | hedge | She seemed tired.
 pass | hedge | "It's kinda making a really good point," she said.
 ```
 
-There are 45 of them in my own setup right now, and every one comes from a ruling I made. The test suite runs all of them, along with tests for the other scripts (28 tests in all in the novel's repo, passing as of 2026-11-02, and this repo has its own suite of 35). The `pass` lines are the important ones - they keep a rule from creeping into territory I've already said is fine, like a hedge in dialogue, or a number the story actually counted ("Back in Scene 4, she'd lied").
+There are 45 of them in my own setup right now, and every one comes from a ruling I made. The test suite runs all of them, along with tests for the other scripts (28 tests in all in the novel's repo, passing as of 2026-11-02, and this repo has its own suite of 48). The `pass` lines are the important ones - they keep a rule from creeping into territory I've already said is fine, like a hedge in dialogue, or a number the story actually counted ("Back in Scene 4, she'd lied").
 
 The scanner also keeps score on itself. Every label it writes gets a verdict from the review (`keep`, `tic`, `false alarm` or `ask`), and a review report lists any rule where at least 50% of its reviewed hits, out of 3 or more, turned out to be false alarms. That rule's regex gets fixed at the source, so I'm not dismissing the same misfire forever.
 

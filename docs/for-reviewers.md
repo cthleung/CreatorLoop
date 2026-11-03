@@ -5,7 +5,7 @@ If you're hiring for an ML role on creative tools, this page is pretty much the 
 ## Shipping reliable, tested code
 
 I've worked full time as a software engineer for 3 years, most recently building AI tooling at a large bank, including the tool layer an assistant calls and a personal-memory service I originally wrote. That work isn't public, but here's what is.
-- [`tools/`](../tools/) with [35 tests](../tests/) that run on Linux, macOS and Windows on every push. The scanner refuses to save if its labels don't strip back to the original text byte for byte.
+- [`tools/`](../tools/) with [48 tests](../tests/) that run on Linux, macOS and Windows on every push. The scanner refuses to save if its labels don't strip back to the original text byte for byte.
 - [worktree-handoff](https://github.com/cthleung/worktree-handoff), a plugin I spun off from this setup, with its own cross-platform test suite and guards against overwriting work it didn't expect.
 
 ## Applying LLMs to a real project
@@ -13,7 +13,7 @@ I've worked full time as a software engineer for 3 years, most recently building
 That's honestly the entire repo, but the clearest pieces are probably these.
 - **Agents and prompting.** 5 reader agents with strict output formats, run cold so they can't see each other's reasoning ([the prompts](../agents/), and how they fit in [how-it-works.md](how-it-works.md)).
 - **Evaluation.** Gold sets built from my own rulings, a blind test with held-out lines, and repeated runs ([evaluation.md](evaluation.md)).
-- **Deployment and model choice.** I served a fine-tuned 31B model myself and measured it against Claude on time to first token, context and cost ([model-experiments.md](model-experiments.md)).
+- **Deployment and model choice.** I served a fine-tuned 31B model myself and measured it against Claude on time to first token, context and cost ([model-experiments.md](model-experiments.md)), and ran a 12B model on my own laptop with MLX against the same blind test ([results](../evals/results/2026-11-03-local-mlx.md)).
 - **Personalization.** How my picks and overrides become rules and tests, and the preference data a LoRA adapter could train on later ([taste-memory.md](taste-memory.md)).
 
 ## Experimental design, and telling a real effect from noise
@@ -47,6 +47,6 @@ I came to prose from film, and to SWE/ML from an engineering physics degree. In 
 ## What I'm still building toward
 
 - **A bigger gold set,** so the experiments have enough must-fail lines to show a real difference.
-- **On-device work.** The plan is a local model on my Mac with MLX, which I haven't really started yet.
+- **On-device work.** [A first MLX run](../evals/results/2026-11-03-local-mlx.md) put Gemma 4 12B on my MacBook Air as the voice reader, with the same blind test and stats as the Claude runs. It matched Claude on 38 of 42 lines, but the first token took a median 151 seconds, so the next step is the prompt cache and a bigger gold set.
 - **Swift and Apple-platform code.** I've studied Swift, but nothing in this repo is native app code.
 - **The preference log and an adapter trained on it,** which are designed but not built.
