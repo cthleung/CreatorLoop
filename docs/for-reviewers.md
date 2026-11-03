@@ -42,7 +42,7 @@ I'm a photographer and filmmaker on the side (Lightroom and Final Cut Pro, mostl
 
 ## A non-traditional path
 
-I came to prose from film, and to SWE/ML from an engineering physics degree. In other words, most of what's in here I learned by just building it to support me with a creative project I really cared about. [Why I built it](why-i-built-it.md) covers how that happened.
+I came to the novel from film and a lot of reading and writing, and to SWE/ML from an engineering physics degree. The story grew to about 400,000 words, which is more than I could ever write by hand for a passion project, so most of what's in here I built to scale up my own creativity without losing the vision, and pretty much learned it all as I went. [Why I built it](why-i-built-it.md) covers how that happened.
 
 ## What I'm still building toward
 

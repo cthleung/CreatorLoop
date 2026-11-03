@@ -1,6 +1,6 @@
 # Why I built it
 
-I honestly don't know anymore if my novel is a writing project or an engineering one. It's a long, character-driven story I've been writing with an AI for a while now, and somewhere along the way it grew its own scanners, review agents, regression tests (for prose, which still makes me laugh), memory files, workflow tools and a one-click installer, so I can sit down at my other computer and pick up right where I left off. CreatorLoop is all of that tooling pulled out of the novel, cleaned up, and written down, so other people can see how it works and why I made it like this.
+I honestly don't know anymore if my novel is a writing project or an engineering one. It's a long, character-driven story I've been writing with an AI, about 400,000 words so far, and somewhere along the way it grew its own scanners, review agents, regression tests (for prose, which still makes me laugh), memory files, workflow tools and a one-click installer, so I can sit down at my other computer and pick up right where I left off. CreatorLoop is all of that tooling pulled out of the novel, cleaned up, and written down, so other people can see how it works and why I made it like this.
 
 This doc is the why. The [case study](../case-study/tangerine-drive/README.md) is the how, with 1 scene traced from start to finish.
 
@@ -20,7 +20,9 @@ I see AI the same way, I think. It can absolutely make slop, but whether you mak
 
 My background in storytelling is screenwriting and film analysis, and I'm a photographer and filmmaker on the side (Lightroom and Final Cut Pro, mostly). That being said, when I first sat down with the editing tools, they were hard to pick up blind - I had a strong sense of how a film should look and move, and the tool turned into a bottleneck in my process when it should've been the amplifier. So I put my filmmaking into writing instead. The novel is written like a film in a lot of ways - camera angles, cold opens, music cues, cuts - because that's how I see scenes in my head.
 
-Prose was new to me, though, so I leaned on AI for research/brainstorming/editing, because I learn best by asking question after question until the idea in my head comes out legible on the page. It was the fastest teacher I've ever had, and also the most confidently wrong.
+Writing itself was never the hard part. I'm widely read, I used to write a lot, and I've got very specific tastes (and demands, honestly) about what I want from a story and from the prose that tells it. What I'd never taken on was a novel, and this one kept growing. The story in my head turned into about 400,000 words of characters, plot and payoffs, and that's a scale I just can't deliver by hand, least of all for a hobby project that exists purely out of passion.
+
+So that's where I figured AI could come in, as a way to scale up my own creativity. The catch was that everything I cared about lived in the vision, and I had to figure out how to keep that intact while a machine did a lot of the drafting. Pretty much everything in this repo is my answer to that problem.
 
 ## The problem: it kept forgetting me
 
