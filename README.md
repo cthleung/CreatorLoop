@@ -1,5 +1,7 @@
 # CreatorLoop
 
+[![tests](https://github.com/cthleung/CreatorLoop/actions/workflows/test.yml/badge.svg)](https://github.com/cthleung/CreatorLoop/actions/workflows/test.yml)
+
 CreatorLoop is the workflow I built for writing a novel with an AI, where I keep the taste and the machine does the legwork. It's pulled straight out of my own writing setup, so everything in here came from real use (and, honestly, a lot of my own mistakes), and it's documentation first, so it's mostly about how the loop works and why, with 1 scene traced from the first idea to the published page.
 
 <p>
