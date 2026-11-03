@@ -12,7 +12,7 @@ I've worked full time as a software engineer for 3 years, most recently building
 
 And here's what's public.
 - [`tools/`](../tools/) with [48 tests](../tests/) that run on Linux, macOS and Windows on every push. The scanner refuses to save if its labels don't strip back to the original text byte for byte.
-- [worktree-handoff](https://github.com/cthleung/worktree-handoff), a plugin I spun off from this setup, with its own cross-platform test suite and guards against overwriting work it didn't expect.
+- [worktree-handoff](https://github.com/cthleung/worktree-handoff), a plugin I spun off from this setup and the repo I'd point to for how I build. It has 44 tests (end to end against real git on Linux, macOS and Windows, plus fast unit tests), lint, type checks and 84% coverage in CI, [design notes](https://github.com/cthleung/worktree-handoff/blob/main/docs/design.md) for every decision behind its safety guards, and a [build log](https://github.com/cthleung/worktree-handoff/blob/main/docs/building-log.md) that walks through it 1 small, green pull request at a time.
 
 ## Applying LLMs to a real project
 
