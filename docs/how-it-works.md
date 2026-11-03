@@ -28,7 +28,7 @@ She seemed tired. [check: hedge]
 
 There are 2 kinds of label, and they're pretty different. A `hard` label means the rule's broken almost every time it fires. A `check` label means maybe, since it might be a tic, or it might just be the character's voice, and a person has to decide. That being said, the scanner never fixes anything. It only labels.
 
-The part I'm proudest of is that labels can always come back out. Stripping every ` [...]` from the file gives back the original byte for byte, line numbers never move, and the scanner won't save if that round trip ever fails. So the labels can sit inside the manuscript while I work, and they can't damage it.
+The part I'm proudest of is that labels can always come back out. **Stripping every ` [...]` from the file gives back the original byte for byte, line numbers never move, and the scanner won't save if that round trip ever fails.** So the labels can sit inside the manuscript while I work, and they can't damage it.
 
 ## 5. The cold readers
 

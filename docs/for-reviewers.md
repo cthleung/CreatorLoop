@@ -4,7 +4,7 @@ If you're hiring for an ML role on creative tools, this page is pretty much the 
 
 ## How I built these repos
 
-Both repos were built with coding agents, mostly Claude Code, and I'd rather just say so up front. The agent did most of the typing, code and first drafts of docs alike (the docs then go through a voice check I built against my own writing samples, so they still sound like me). The problems, the rules, the picks and every merge were mine. [Section 9 of worktree-handoff's engineering page](https://github.com/cthleung/worktree-handoff/blob/main/docs/how-i-engineer.md#9-working-with-a-coding-agent) has the stories of where the checks caught the agent, and honestly, building with agents every day is where a lot of my opinions about creator tools come from.
+Both repos were built with coding agents, mostly Claude Code, and I'd rather just say so up front. The agent did most of the typing, code and first drafts of docs alike (the docs then go through a voice check I built against my own writing samples, so they still sound like me). **The problems, the rules, the picks and every merge were mine.** [Section 9 of worktree-handoff's engineering page](https://github.com/cthleung/worktree-handoff/blob/main/docs/how-i-engineer.md#9-working-with-a-coding-agent) has the stories of where the checks caught the agent, and honestly, building with agents every day is where a lot of my opinions about creator tools come from.
 
 ## Shipping reliable, tested code
 
@@ -29,14 +29,14 @@ That's honestly the entire repo, but the clearest pieces are probably these.
 
 ## Experimental design, and telling a real effect from noise
 
-The [first repeated-run experiment](../evals/results/2026-11-03-calibrated-vs-generic.md) compares my calibrated voice reader against a generic judge, blind, 5 runs each, with bootstrap intervals and an exact McNemar test. The result I'm proudest of is, oddly, the boring one - the calibrated brief caught 87% of the bad lines against 67%, and I still can't claim it's better, because only 3 lines separated them and that can't get below p = 0.25. The write-up says why, and what it'd take to find out (more must-fail lines, not more runs).
+The [first repeated-run experiment](../evals/results/2026-11-03-calibrated-vs-generic.md) compares my calibrated voice reader against a generic judge, blind, 5 runs each, with bootstrap intervals and an exact McNemar test. The result I'm proudest of is, oddly, the boring one - **the calibrated brief caught 87% of the bad lines against 67%, and I still can't claim it's better**, because only 3 lines separated them and that can't get below p = 0.25. The write-up says why, and what it'd take to find out (more must-fail lines, not more runs).
 
 That being said, the same habit shows up elsewhere too. At work, I tuned the GPU deployment above one variable at a time against a baseline. When I deployed my own model, I set a latency target first (under 8 seconds to the first token) and measured against it. And when a benchmark claimed my new GPU had doubled the prompt speed, a later check found the requests had been hitting the old one the whole time, so I just don't trust a speedup until I know which machine answered.
 
 ## Product sense: is this the right experience?
 
 - **[The tangerine drive](../case-study/tangerine-drive/README.md)** shows where I overrode the AI and why. That includes the times I pulled the other way, like letting a stock smirk stay so the scene didn't get over-written, because a fix that touches every line does real damage too.
-- **[Model experiments](model-experiments.md)** is the "can the model do it, versus is it the right experience" question in real life. The fine-tune actually wrote better sentences and was still the wrong choice, because a 2-minute cold start kills a writing session.
+- **[Model experiments](model-experiments.md)** is the "can the model do it, versus is it the right experience" question in real life. I really liked the fine-tune's prose, and it was still the wrong choice, because a 2-minute cold start kills a writing session.
 - **[Keep what works](how-it-works.md):** A reader agent exists only to protect what a draft already does well.
 - **[Version control you can see and talk to](version-control.md)** started as my own pain point (several AI chats in 1 folder, 2 computers, and no patience for git), and it ends with what I'd want in an editing app.
 

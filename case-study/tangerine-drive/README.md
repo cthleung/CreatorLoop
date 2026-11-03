@@ -96,7 +96,7 @@ You'll find the finished scene in [07-final.md](07-final.md).
 
 ## What stayed behind
 
-The scene's been published since, but the bigger outcome, honestly, is everything that outlived it. Several rulings from this scene alone went into my style guide, my scanner and its tests, so they apply to every scene I've written since: narrated non-events, invented numbers (figurative ones included), similes about how someone says a line ("casual as suggesting lunch," which I'd rather just replace with an adverb), bickering where nobody repeats the other's line back, and dialogue tags that follow what the narrator can actually perceive (she can't see a smirk with her eyes shut).
+The scene's been published since, but the bigger outcome, honestly, is everything that outlived it. **Several rulings from this scene alone went into my style guide, my scanner and its tests, so they apply to every scene I've written since**: narrated non-events, invented numbers (figurative ones included), similes about how someone says a line ("casual as suggesting lunch," which I'd rather just replace with an adverb), bickering where nobody repeats the other's line back, and dialogue tags that follow what the narrator can actually perceive (she can't see a smirk with her eyes shut).
 
 In other words, my taste gets carried forward, so the system's imprinted with it and I don't have to do as much refinement in the future. The next scene starts a little closer to what I want, and I spend less time saying the same thing twice. Which, as far as I'm concerned, is the entire reason I built any of this.
 

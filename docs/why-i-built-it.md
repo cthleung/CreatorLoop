@@ -20,7 +20,7 @@ Looking back, that's pretty much the loop I run my novel on now, with the machin
 
 The other big influence on me is Pixar. Part of that is storytelling (I've always believed the frivolous can contain the profound, and my novel pretty much runs on that belief), but part of it is what 3D animation did to the form. It lowered the bar, sure, and plenty of lazy work came out of it. It also raised the ceiling far above anything that was possible before, and some of the most incredible sequences I carry around in my head come from 3D animation (the lantern scene in *Tangled*, for one).
 
-I see AI the same way, I think. It can absolutely make slop, but whether you make slop is a human decision, made by whoever's using it. Used carefully, it can help a creator tell a story in a way they couldn't have managed alone, and that's the only version of it I'm interested in.
+I see AI the same way, I think. **It can absolutely make slop, but whether you make slop is a human decision, made by whoever's using it.** Used carefully, it can help a creator tell a story in a way they couldn't have managed alone, and that's the only version of it I'm interested in.
 
 ## Why a novel, of all things
 
@@ -28,7 +28,7 @@ My background in storytelling is screenwriting and film analysis, and I'm a phot
 
 Writing itself was never the hard part. I'm widely read, I used to write a lot, and I've got very specific tastes (and demands, honestly) about what I want from a story and from the prose that tells it. What I'd never taken on was a novel, and this one kept growing. The story in my head turned into about 400,000 words of characters, plot and payoffs, and that's a scale I just can't deliver by hand, least of all for a hobby project that exists purely out of passion.
 
-So that's where I figured AI could come in, as a way to scale up my own creativity. The catch was that everything I cared about lived in the vision, and I had to figure out how to keep that intact while a machine did a lot of the drafting. Pretty much everything in this repo is my answer to that problem.
+So that's where I figured AI could come in, as a way to scale up my own creativity. The catch was that everything I cared about lived in the vision, and I had to figure out how to keep that intact while a machine did a lot of the drafting. **Pretty much everything in this repo is my answer to that problem.**
 
 ## The problem: it kept forgetting me
 

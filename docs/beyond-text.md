@@ -90,7 +90,7 @@ And a creator shouldn't have to learn git to get any of this. I don't type git f
 
 ## Training the decisions before the pixels
 
-If I were teaching a model my editing taste, I'd start with the agent's decisions and leave image generation for later. The app still does the actual cutting and grading, which it's already great at anyway, and the model learns which operations to propose and in what order. A training example would look something like this.
+**If I were teaching a model my editing taste, I'd start with the agent's decisions and leave image generation for later.** The app still does the actual cutting and grading, which it's already great at anyway, and the model learns which operations to propose and in what order. A training example would look something like this.
 
 ```
 Input:      my request, the transcript and clip notes, the current timeline,

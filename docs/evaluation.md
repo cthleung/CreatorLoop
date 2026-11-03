@@ -6,7 +6,7 @@ Creative writing is honestly a pain to measure, since there's no right answer to
 
 This is the one idea the rest of the doc hangs on. If a reviewer misses a tic, I'll probably just catch it myself when I read the draft. If a reviewer flags a line that was actually good, and nobody notices, the fix sands that line down into something safer and blander. Do that across a whole book and you get prose that's technically clean and has no voice left in it, which is pretty much the failure I built all this to avoid.
 
-So every eval here treats a false alarm on a good line as worse than a miss. For the voice reader, the bar is zero false alarms on the lines that must pass, and if it fails that, its instructions get fixed before I trust any of its flags.
+**So every eval here treats a false alarm on a good line as worse than a miss.** For the voice reader, the bar is zero false alarms on the lines that must pass, and if it fails that, its instructions get fixed before I trust any of its flags.
 
 ## What runs today
 

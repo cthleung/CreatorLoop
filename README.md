@@ -19,7 +19,7 @@ If you're looking at this for an ML role on creative tools, here's the short ver
 - **Agents with a person in charge:** A named inventor on a [granted patent](https://patents.google.com/patent/US12639279B2/en) for an LLM agent from my day job, and both repos were [built with coding agents](docs/for-reviewers.md#how-i-built-these-repos), openly.
 - **LLMs on a real project:** Agents, evals, a self-hosted fine-tune, an on-device run with MLX and a plan for personal adapters, all built around a novel I'm actually writing.
 - **Experimental design:** A [blind, repeated-run comparison](evals/results/2026-11-03-calibrated-vs-generic.md) of 2 reviewer briefs, with bootstrap intervals and McNemar - and an honest read of why the gold set's still too small to call it.
-- **Product sense:** I [ditched a model that wrote better prose](docs/model-experiments.md), because a 2-minute cold start is the wrong experience for someone mid-scene.
+- **Product sense:** I [ditched a model whose prose I really liked](docs/model-experiments.md), because a 2-minute cold start is the wrong experience for someone mid-scene.
 - **Version control a creator can talk to:** I got tired of typing git for my novel, so I [built skills that do it for me](skills/README.md), and [version-control.md](docs/version-control.md) is how that'd work in a photo or video app.
 - **Creative tools from the inside:** I'm a photographer and filmmaker, and [beyond-text.md](docs/beyond-text.md) is what I'd want from an agent in my own edit suite.
 
@@ -37,7 +37,7 @@ my idea
   -> the next scene starts closer to what I want
 ```
 
-The short version goes like this. I decide what a scene is about and how it should feel, which is the part I'd never really hand off, and the AI helps me check facts, lay out options, draft and sweep every line for problems. Every time I pick an option or overrule the AI, that choice gets written down somewhere it can read - a style rule or a test case, usually - so I don't have to make the same correction twice. Over time, the system ends up imprinted with my taste, and each new scene starts a little closer to what I want, which is probably the most useful thing it does for me.
+The short version goes like this. I decide what a scene is about and how it should feel, which is the part I'd never really hand off, and the AI helps me check facts, lay out options, draft and sweep every line for problems. **Every time I pick an option or overrule the AI, that choice gets written down somewhere it can read - a style rule or a test case, usually - so I don't have to make the same correction twice.** Over time, the system ends up imprinted with my taste, and each new scene starts a little closer to what I want, which is probably the most useful thing it does for me.
 
 ## Start here
 

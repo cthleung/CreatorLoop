@@ -10,7 +10,7 @@ I work in VS Code with Claude Code, and sometimes with GitHub Copilot's agent, s
 
 ## Hooks
 
-Hooks are small scripts the editor runs on its own at set moments. The rules in a config file are really just suggestions, but a hook is where they stop being optional.
+Hooks are small scripts the editor runs on its own at set moments. **The rules in a config file are really just suggestions, but a hook is where they stop being optional.**
 
 | When | What it does |
 |---|---|

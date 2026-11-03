@@ -34,7 +34,7 @@ Oh, and one thing I learned about measuring along the way. At one point a benchm
 | Cost | It's a personal project, running on $30 of credits | About $2.50 an hour for the A100, and keeping it warm meant paying for idle time | Worth it |
 | Working in my editor | The whole loop runs on agents, tools and hooks | HTTP/2 protocol errors while the GPU booted, and agent mode still dragged | Built for it |
 
-Claude won on every one that mattered, so that's where I ended the experiment. That being said, the prose result stuck with me. A model can write better sentences and still be the wrong choice, because the experience around it (how fast it answers, and whether it works with your tools) decides whether you can actually create with it.
+Claude won on every one that mattered, so that's where I ended the experiment. That being said, the prose result stuck with me. **A model can write better sentences and still be the wrong choice, because the experience around it (how fast it answers, and whether it works with your tools) decides whether you can actually create with it.**
 
 ## Where this goes next
 
