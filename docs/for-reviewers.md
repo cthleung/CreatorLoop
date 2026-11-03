@@ -2,11 +2,16 @@
 
 If you're hiring for an ML role on creative tools, this page is pretty much the shortcut. It goes through what those roles tend to ask for, in roughly the order they ask, and points at the evidence in this repo for each one. Where the evidence lives outside the repo (my day job, mostly), I've just said so, and the last section is an honest list of what I'm still building toward.
 
+## How I built these repos
+
+Both repos were built with coding agents, mostly Claude Code, and I'd rather just say so up front. The agent did most of the typing, code and first drafts of docs alike (the docs then go through a voice check I built against my own writing samples, so they still sound like me). The problems, the rules, the picks and every merge were mine. [Section 9 of worktree-handoff's engineering page](https://github.com/cthleung/worktree-handoff/blob/main/docs/how-i-engineer.md#9-working-with-a-coding-agent) has the stories of where the checks caught the agent, and honestly, building with agents every day is where a lot of my opinions about creator tools come from.
+
 ## Shipping reliable, tested code
 
 I've worked full time as a software engineer for 3 years, most recently building AI tooling at a large bank. That work isn't public, so here's the short version first.
 - **Deploying an ML model to production GPUs.** I deployed a PII-detection NER model to our internal inference platform (NVIDIA Triton, on H100s) and wrote nearly all of that repo, CI/CD included: deploys across pre-production environments, signed release bundles, container image scanning, and a config-only deploy so a tuning run didn't need a full rebuild.
 - **Tuning it like an experiment.** Each phase changed 1 variable (batch size, queue delay, pod count, GPU split, CPU allocation) against a recorded baseline, and every table in the write-up ended with a verdict. 2 pods splitting 1 GPU beat 1 pod with a full GPU, for the same GPU budget, with 21 to 31 times lower latency and 55 to 58% more throughput at typical load. At extreme load, though, throughput dropped by about a quarter, and I wrote that down just as plainly as the win, since anyone picking that config should know.
+- **An agent with a person in charge.** I'm a named inventor on [US 12,639,279](https://patents.google.com/patent/US12639279B2/en), granted in 2026, for an LLM agent that fills in missing documentation for business datasets. It works in small steps you can check on their own, and a data steward approves what it writes, which is really the same loop as everything in this repo - just a few years earlier.
 - **Rolling it out safely.** A feature toggle across the shared protocol library, the gateway and the worker, with the worker falling back to the existing path if the new inference service was down.
 - **Ownership.** I wrote the first version of a backend memory service and became its largest contributor, and I'm the largest individual contributor on the tool server our AI assistant talks to. I ship in small PRs, several a day when the work allows, because a change that's reviewable in one sitting is a change I'd want to inherit.
 

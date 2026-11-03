@@ -10,6 +10,12 @@ As a kid in the 2000s, I used to imagine that one day a computer would be able t
 
 So when LLMs came along, they looked to me like the thing I'd been picturing all along, a harness and a tool that could take a fuzzy, human request and actually do something useful with it. And because I'd been carrying that picture around for so long, I think I was a little ahead of the curve in working out what to do with it. As far as I can tell, very few people write a novel with an AI like I do, and even fewer build their own tooling to make it hold to their taste.
 
+## The first version was at work
+
+The first time I built that for real was at my day job, back in 2023. My team at the bank made an LLM agent that fills in the missing documentation for business datasets, and I'm one of the named inventors on the [patent](https://patents.google.com/patent/US12639279B2/en) it turned into. We split the agent into small steps (planning, pulling in context, generating, then writing it back), partly so each one could be checked on its own, since off-the-shelf agent tooling hadn't really caught up yet, and nothing it wrote counted until a data steward approved it.
+
+Looking back, that's pretty much the loop I run my novel on now, with the machine doing the legwork in steps I can see and a person making the call. I just didn't know yet that I'd end up pointing it at my own creative work.
+
 ## Why I trust the tool anyway
 
 The other big influence on me is Pixar. Part of that is storytelling (I've always believed the frivolous can contain the profound, and my novel pretty much runs on that belief), but part of it is what 3D animation did to the form. It lowered the bar, sure, and plenty of lazy work came out of it. It also raised the ceiling far above anything that was possible before, and some of the most incredible sequences I carry around in my head come from 3D animation (the lantern scene in *Tangled*, for one).
