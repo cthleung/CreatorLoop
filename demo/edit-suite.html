@@ -13,26 +13,27 @@
 /* Layout: the replay's 2 panes again. The conversation sits on the left, the suite sits on the right
    (shot order, previews and a drawn timeline), and the step rail shows who acted. Same palette as the replay. */
 :root {
-  --bg: #ECEFEE;
-  --surface: #FAFBF9;
-  --ink: #1C2326;
-  --muted: #5A666B;
-  --rule: #CDD5D6;
+  --bg: #F2F4EC;
+  --surface: #FDFFF4;
+  --ink: #122123;
+  --muted: #54645D;
+  --rule: #C9D4CF;
   --me: #D9680B;
   --me-ink: #A34A04;
-  --me-tint: #FBE6D2;
-  --ai: #44515E;
-  --ai-ink: #3A4652;
-  --ai-tint: #E1E6EB;
-  --ok: #2F6B45;
-  --ok-tint: #DCEDE1;
-  --code-bg: #E4E8E8;
-  --lane: #E2E7E7;
-  --clip-v: #C7D2DC;
-  --clip-a: #C9DACF;
-  --clip-ink: #1C2326;
-  --screen: #0E1315;
-  --screen-ink: #C8D2D5;
+  --me-tint: #F8E3CF;
+  --ai: #295365;
+  --ai-ink: #295365;
+  --ai-tint: #DDE7E8;
+  --ok: #3D551E;
+  --ok-tint: #E2EAD6;
+  --code-bg: #E6EBE3;
+  --lane: #E4E9E1;
+  --clip-v: #CFDCDD;
+  --clip-a: #D6E0C8;
+  --clip-ink: #122123;
+  --screen: #122123;
+  --screen-ink: #C9D4CF;
+  --shadow: rgba(18, 33, 35, 0.22);
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
   --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -46,21 +47,21 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111517; --surface: #192023; --ink: #E5EAEA; --muted: #98A4A9; --rule: #2C3539;
+    --bg: #0E1819; --surface: #162426; --ink: #EEF2E8; --muted: #9AACA6; --rule: #2A3A3B;
     --me: #EE8530; --me-ink: #F4A15C; --me-tint: #3A2412;
-    --ai: #8FA3B8; --ai-ink: #B8C7D6; --ai-tint: #232D36;
-    --ok: #86CDA0; --ok-tint: #17301F; --code-bg: #20282B;
-    --lane: #1E2528; --clip-v: #2F3B47; --clip-a: #2B3C32; --clip-ink: #E5EAEA;
-    color-scheme: dark;
+    --ai: #8FB5B2; --ai-ink: #A9C9C6; --ai-tint: #1E3133;
+    --ok: #9DB86A; --ok-tint: #1D2A14; --code-bg: #1B2B2D;
+    --lane: #1A2A2C; --clip-v: #2A4446; --clip-a: #2E3E22; --clip-ink: #EEF2E8;
+    --shadow: rgba(0, 0, 0, 0.45); --screen: #0A1213; --screen-ink: #C9D4CF; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111517; --surface: #192023; --ink: #E5EAEA; --muted: #98A4A9; --rule: #2C3539;
+  --bg: #0E1819; --surface: #162426; --ink: #EEF2E8; --muted: #9AACA6; --rule: #2A3A3B;
   --me: #EE8530; --me-ink: #F4A15C; --me-tint: #3A2412;
-  --ai: #8FA3B8; --ai-ink: #B8C7D6; --ai-tint: #232D36;
-  --ok: #86CDA0; --ok-tint: #17301F; --code-bg: #20282B;
-  --lane: #1E2528; --clip-v: #2F3B47; --clip-a: #2B3C32; --clip-ink: #E5EAEA;
-  color-scheme: dark;
+  --ai: #8FB5B2; --ai-ink: #A9C9C6; --ai-tint: #1E3133;
+  --ok: #9DB86A; --ok-tint: #1D2A14; --code-bg: #1B2B2D;
+  --lane: #1A2A2C; --clip-v: #2A4446; --clip-a: #2E3E22; --clip-ink: #EEF2E8;
+  --shadow: rgba(0, 0, 0, 0.45); --screen: #0A1213; --screen-ink: #C9D4CF; color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -301,7 +302,38 @@ td code { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ai-ink
   .js[data-mode="steps"] .step:not([hidden]) { animation: rise 0.28s ease-out; }
   @keyframes rise { from { opacity: 0.4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 }
+
+/* wabi-sabi: paper grain, uneven hand-cut edges, lines that fade out, one brushstroke */
+body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.47 0 0 0 0 0.44 0 0 0 0.11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+h1 em {
+  padding: 0 0.04em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M3 15 C40 8 88 19 132 11 S184 10 197 13' fill='none' stroke='%23D9680B' stroke-width='8' stroke-linecap='round' opacity='0.28'/%3E%3Cpath d='M10 18 C60 14 120 20 190 15' fill='none' stroke='%23D9680B' stroke-width='2.5' stroke-linecap='round' opacity='0.35'/%3E%3C/svg%3E") no-repeat 0 96% / 100% 0.36em;
+}
+.sheet { border-radius: 3px 9px 4px 7px / 8px 3px 9px 4px; box-shadow: 0 14px 26px -22px var(--shadow); }
+.msg.me { border-radius: 18px 13px 5px 16px / 14px 18px 4px 15px; }
+.msg.ai { border-radius: 13px 18px 16px 5px / 18px 14px 15px 4px; }
+.rail a[aria-current="step"] { box-shadow: inset 0 0 0 1px var(--rule); border-radius: 4px 10px 5px 8px / 9px 4px 10px 5px; }
+.label, .chip, .kind, .pill, .v, .g-chip, .bin, .state, .actor { border-radius: 2px 6px 3px 5px / 5px 2px 6px 3px; }
+.opt, .verdicts li, .prefs li, .concept { border-radius: 4px 9px 5px 8px / 8px 4px 9px 5px; }
+.thumb, .screen, .g-thumb { border-radius: 2px 5px 3px 4px; }
+pre { border-radius: 3px 7px 4px 6px; }
+.step, .credits, .outro { border-top: 0; position: relative; }
+.step::before, .credits::before, .outro::before {
+  content: ""; position: absolute; top: 0; left: max(16px, env(safe-area-inset-left, 0px)); right: 18%; height: 1px;
+  background: linear-gradient(90deg, var(--rule), var(--rule) 55%, transparent);
+}
+.js[data-mode="steps"] .step::before { display: none; }
+.controls { background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.top-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.theme-btn { display: none; align-items: center; gap: 7px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 13px; font: inherit; font-size: var(--fs-small); cursor: pointer; }
+.js .theme-btn { display: inline-flex; }
+.theme-btn svg { width: 14px; height: 14px; }
 </style>
+<script>
+try { var t = localStorage.getItem("creatorloop-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
 </head>
 <body>
 
@@ -315,9 +347,12 @@ td code { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ai-ink
       <span><i class="sw" aria-hidden="true"></i>Me</span>
       <span><i class="sw ai" aria-hidden="true"></i>The agent</span>
     </div>
-    <div class="mode" role="group" aria-label="View">
-      <button type="button" id="mode-steps" aria-pressed="true">Step through</button>
-      <button type="button" id="mode-all" aria-pressed="false">Show all</button>
+    <div class="top-tools">
+      <div class="mode" role="group" aria-label="View">
+        <button type="button" id="mode-steps" aria-pressed="true">Step through</button>
+        <button type="button" id="mode-all" aria-pressed="false">Show all</button>
+      </div>
+      <button type="button" class="theme-btn" id="theme-btn" aria-label="Switch theme"></button>
     </div>
   </div>
   <ol class="rail" aria-label="Steps">
@@ -906,6 +941,29 @@ td code { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ai-ink
     if (e.key === "ArrowRight") { go(current() + 1); }
     if (e.key === "ArrowLeft") { go(current() - 1); }
   });
+  /* ---------- light and dark ---------- */
+  var themeBtn = document.getElementById("theme-btn");
+  var SUN = '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.2v1.8M8 13v1.8M1.2 8H3M13 8h1.8M3.2 3.2l1.3 1.3M11.5 11.5l1.3 1.3M3.2 12.8l1.3-1.3M11.5 4.5l1.3-1.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  var MOON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 10.2A5.6 5.6 0 0 1 5.8 2.8a5.6 5.6 0 1 0 7.4 7.4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  var darkQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  function theme() {
+    var t = root.getAttribute("data-theme");
+    if (t === "light" || t === "dark") return t;
+    return darkQuery && darkQuery.matches ? "dark" : "light";
+  }
+  function paintThemeBtn() {
+    var next = theme() === "dark" ? "light" : "dark";
+    themeBtn.innerHTML = (next === "light" ? SUN : MOON) + "<span>" + (next === "light" ? "Light" : "Dark") + "</span>";
+    themeBtn.setAttribute("aria-label", "Switch to " + next + " mode");
+  }
+  themeBtn.addEventListener("click", function () {
+    var next = theme() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("creatorloop-theme", next); } catch (e) {}
+    paintThemeBtn();
+  });
+  if (darkQuery && darkQuery.addEventListener) darkQuery.addEventListener("change", paintThemeBtn);
+  paintThemeBtn();
   render();
 })();
 </script>
