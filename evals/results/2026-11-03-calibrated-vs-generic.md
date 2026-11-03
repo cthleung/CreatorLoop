@@ -28,6 +28,8 @@ McNemar on majority verdicts:
 
 - **Both briefs failed the zero-false-alarm bar, on the same line:** P23 got flagged in all 10 runs. So either my brief needed to learn that line was fine, or my pass label on it was wrong. I ruled on it after the run, and the answer was a bit of both. P23 was 2 sentences, and I kept the first ("Still performing, even with the rest of her gone numb." is her voice) as a must-pass, while the second, which states the theme as a paradox, became a must-fail line, F15. Honestly it's the most useful thing this run found, because without the gold set I'd never have looked at that sentence again.
 - **The calibrated brief catches more, but this gold set is too small to prove it:** 87% against 67% looks like a big gap, but McNemar only counts the lines where the 2 briefs disagree, and there were just 3 of those. A 3-to-0 split can't get below p = 0.25 however you slice it. It takes at least 6 lines going one way with none the other way to get under 0.05, so the fix is more must-fail lines, not more runs.
+- **It compares 2 setups, so it can't isolate calibration on its own:** The calibrated brief read about 25 KB of my guides before judging, and the generic judge read nothing but the blind file. So the gap mixes calibration with plain extra context. The clean test would give the generic judge the same amount of reading with my calibration taken out.
+- **The must-fail lines might share the judges' blind spots:** An AI from the same family as the judges proposed them, and I signed off afterward. Lines I write myself, or pull from drafts I actually rejected, would be a fairer test, since they wouldn't carry that model's own idea of what bad prose looks like.
 - **Run-to-run noise was small:** Only 2 or 3 of the 42 scored lines ever changed verdict, so 5 runs per brief was probably plenty for this test.
 - **My assumption about generic judges was wrong:** I really expected a plainness judge to flag lots of the grand, strange lines I'd approved, and it didn't (5% against 4%). Its weakness was the other way round - it just let more of the bad lines through.
 
@@ -49,5 +51,7 @@ python3 tools/eval_stats.py run/key.json --a A1.md A2.md A3.md A4.md A5.md --b B
 ## Next
 
 1. Rerun on the updated set, with P23 split into a must-pass and a new must-fail line, F15. (The numbers above are on the set as it stood for this run.)
-2. Grow the must-fail set until a real difference has room to show up.
-3. Rerun, and keep each run's results in this folder.
+2. Grow the must-fail set until a real difference has room to show up, with lines I wrote or rejected myself, not lines an AI proposed.
+3. Add the missing arm: a generic judge that reads as much as the calibrated one, so the comparison tests calibration and not context.
+4. Report how many gold lines are held out (never quoted in what the brief reads), and put an interval on the difference between the briefs.
+5. Rerun, and keep each run's results in this folder.

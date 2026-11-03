@@ -24,7 +24,7 @@ And here's what's public.
 That's honestly the entire repo, but the clearest pieces are probably these.
 - **Agents and prompting:** 5 reader agents with strict output formats, run cold so they can't see each other's reasoning ([the prompts](../agents/), and how they fit in [how-it-works.md](how-it-works.md)).
 - **Evaluation:** Gold sets built from my own rulings, a blind test with held-out lines, and repeated runs ([evaluation.md](evaluation.md)).
-- **Deployment and model choice:** I served a fine-tuned 31B model myself and measured it against Claude on time to first token, context and cost ([model-experiments.md](model-experiments.md)), and ran a 12B model on my own laptop with MLX against the same blind test ([results](../evals/results/2026-11-03-local-mlx.md)).
+- **Deployment and model choice:** I served an open fine-tuned 31B model myself (a community fine-tune, so I didn't train it) and measured it against Claude on time to first token, context and cost ([model-experiments.md](model-experiments.md)), and ran a 12B model on my own laptop with MLX against the same blind test ([results](../evals/results/2026-11-03-local-mlx.md)).
 - **Personalization:** How my picks and overrides become rules and tests, and the preference data a LoRA adapter could train on later ([taste-memory.md](taste-memory.md)).
 
 ## Experimental design, and telling a real effect from noise
