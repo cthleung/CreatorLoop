@@ -9,7 +9,7 @@ CreatorLoop is the workflow I built for writing a novel with an AI, where I keep
   <a href="https://cthleung.github.io/CreatorLoop/demo/edit-suite.html"><img src="docs/images/edit-suite.png" width="49%" alt="The edit-suite concept: a session history drawn as a graph of decisions, with branches for each option"></a>
 </p>
 
-The [replay](https://cthleung.github.io/CreatorLoop/demo/) of 1 real scene (left), and the [edit-suite concept](https://cthleung.github.io/CreatorLoop/demo/edit-suite.html) for photo and video (right). Both open in your browser, no install needed.
+The [replay](https://cthleung.github.io/CreatorLoop/demo/) of a real scene (left), and the [edit-suite concept](https://cthleung.github.io/CreatorLoop/demo/edit-suite.html) for photo and video (right). Both open in your browser, no install needed.
 
 ## If you're hiring
 
@@ -47,24 +47,24 @@ The short version goes like this. I decide what a scene is about and how it shou
 
 ## What's in here
 
-| Part | What it is | Status |
-|---|---|---|
-| [`case-study/tangerine-drive/`](case-study/tangerine-drive/) | The worked example: outline, fact check, plan, draft 1, review, 5 rounds of revisions, final | Done |
-| [`docs/why-i-built-it.md`](docs/why-i-built-it.md) | The why | Done |
-| [`docs/how-it-works.md`](docs/how-it-works.md) | The loop step by step, with the tool or agent behind each step | Done |
-| [`docs/taste-memory.md`](docs/taste-memory.md) | How a pick or an override turns into a rule, a memory or a test | Done |
-| [`docs/evaluation.md`](docs/evaluation.md) | Gold sets, blind tests, and why false alarms have to be zero | Done |
-| [`docs/beyond-text.md`](docs/beyond-text.md) | The same loop for photo and video editing | Done |
-| [`docs/version-control.md`](docs/version-control.md) | Version control you can see and talk to: where my commit skills came from, and how it'd work for other creators | Done |
-| [`docs/the-harness.md`](docs/the-harness.md) | How it's built into VS Code and Claude Code: the hooks, skills, subagents, MCP servers, scripts and tests | Done |
-| [`docs/for-reviewers.md`](docs/for-reviewers.md) | What creative-tools ML roles ask for, and where the evidence is | Done |
-| [`evals/results/`](evals/results/) | Experiment write-ups, starting with the calibrated-vs-generic reviewer comparison | Done |
-| [`docs/model-experiments.md`](docs/model-experiments.md) | Deploying my own fine-tuned model, why Claude won anyway, and where LoRA adapters come in | Done |
-| [`tools/`](tools/), [`rules/`](rules/), [`evals/`](evals/), [`tests/`](tests/) | The scanner and its demo rule pack, the merge, the blind test and its demo gold set, the repeated-run stats, the preservation diff, the number picker and the tree triage behind the commit skills, all tested. Run `python3 -m unittest` | Done |
-| [`skills/`](skills/) | The 2 skills that run git for me, tree-triage and session-commit, with the script behind them in `tools/` | Done |
-| [`demo/`](demo/) | A clickable replay of the tangerine drive, and a concept page for the same loop in a video editor, [live here](https://cthleung.github.io/CreatorLoop/demo/) | Done |
-| [`case-study/tangerine-drive/scan/`](case-study/tangerine-drive/scan/) | The tools' output on the case study, rerunnable | Done |
-| [`agents/`](agents/) | The 5 cold reader prompts (voice, gloss, blocking, fact check, and the one that protects what already works), as Claude Code subagents | Done |
+| Part                                                                           | What it is                                                                                                                                                                                                                                | Status |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| [`case-study/tangerine-drive/`](case-study/tangerine-drive/)                   | The worked example: outline, fact check, plan, draft 1, review, 5 rounds of revisions, final                                                                                                                                              | Done   |
+| [`docs/why-i-built-it.md`](docs/why-i-built-it.md)                             | The why                                                                                                                                                                                                                                   | Done   |
+| [`docs/how-it-works.md`](docs/how-it-works.md)                                 | The loop step by step, with the tool or agent behind each step                                                                                                                                                                            | Done   |
+| [`docs/taste-memory.md`](docs/taste-memory.md)                                 | How a pick or an override turns into a rule, a memory or a test                                                                                                                                                                           | Done   |
+| [`docs/evaluation.md`](docs/evaluation.md)                                     | Gold sets, blind tests, and why false alarms have to be zero                                                                                                                                                                              | Done   |
+| [`docs/beyond-text.md`](docs/beyond-text.md)                                   | The same loop for photo and video editing                                                                                                                                                                                                 | Done   |
+| [`docs/version-control.md`](docs/version-control.md)                           | Version control you can see and talk to: where my commit skills came from, and how it'd work for other creators                                                                                                                           | Done   |
+| [`docs/the-harness.md`](docs/the-harness.md)                                   | How it's built into VS Code and Claude Code: the hooks, skills, subagents, MCP servers, scripts and tests                                                                                                                                 | Done   |
+| [`docs/for-reviewers.md`](docs/for-reviewers.md)                               | What creative-tools ML roles ask for, and where the evidence is                                                                                                                                                                           | Done   |
+| [`evals/results/`](evals/results/)                                             | Experiment write-ups, starting with the calibrated-vs-generic reviewer comparison                                                                                                                                                         | Done   |
+| [`docs/model-experiments.md`](docs/model-experiments.md)                       | Deploying my own fine-tuned model, why Claude won anyway, and where LoRA adapters come in                                                                                                                                                 | Done   |
+| [`tools/`](tools/), [`rules/`](rules/), [`evals/`](evals/), [`tests/`](tests/) | The scanner and its demo rule pack, the merge, the blind test and its demo gold set, the repeated-run stats, the preservation diff, the number picker and the tree triage behind the commit skills, all tested. Run `python3 -m unittest` | Done   |
+| [`skills/`](skills/)                                                           | The 2 skills that run git for me, tree-triage and session-commit, with the script behind them in `tools/`                                                                                                                                 | Done   |
+| [`demo/`](demo/)                                                               | A clickable replay of the tangerine drive, and a concept page for the same loop in a video editor, [live here](https://cthleung.github.io/CreatorLoop/demo/)                                                                              | Done   |
+| [`case-study/tangerine-drive/scan/`](case-study/tangerine-drive/scan/)         | The tools' output on the case study, rerunnable                                                                                                                                                                                           | Done   |
+| [`agents/`](agents/)                                                           | The 5 cold reader prompts (voice, gloss, blocking, fact check, and the one that protects what already works), as Claude Code subagents                                                                                                    | Done   |
 
 ## A few notes
 
