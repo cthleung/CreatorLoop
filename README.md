@@ -5,11 +5,11 @@
 CreatorLoop is the workflow I built for writing a novel with an AI, where I keep the taste and the machine does the legwork. It's pulled straight out of my own writing setup, so everything in here came from real use (and, honestly, a lot of my own mistakes), and it's documentation first, so it's mostly about how the loop works and why, with 1 scene traced from the first idea to the published page.
 
 <p>
-  <a href="demo/index.html"><img src="docs/images/replay.png" width="49%" alt="The tangerine drive replay: my messages on the left, draft 1 with the AI's notes marked on the right"></a>
-  <a href="demo/edit-suite.html"><img src="docs/images/edit-suite.png" width="49%" alt="The edit-suite concept: a session history drawn as a graph of decisions, with branches for each option"></a>
+  <a href="https://cthleung.github.io/CreatorLoop/demo/"><img src="docs/images/replay.png" width="49%" alt="The tangerine drive replay: my messages on the left, draft 1 with the AI's notes marked on the right"></a>
+  <a href="https://cthleung.github.io/CreatorLoop/demo/edit-suite.html"><img src="docs/images/edit-suite.png" width="49%" alt="The edit-suite concept: a session history drawn as a graph of decisions, with branches for each option"></a>
 </p>
 
-The [replay](demo/index.html) of 1 real scene (left), and the [edit-suite concept](demo/edit-suite.html) for photo and video (right). Open either file in a browser to click through it.
+The [replay](https://cthleung.github.io/CreatorLoop/demo/) of 1 real scene (left), and the [edit-suite concept](https://cthleung.github.io/CreatorLoop/demo/edit-suite.html) for photo and video (right). Both open in your browser, no install needed.
 
 ## If you're hiring
 
@@ -42,7 +42,7 @@ The short version goes like this. I decide what a scene is about and how it shou
 
 1. **[Why I built it](docs/why-i-built-it.md).** The story behind all this, from a kid in the 2000s imagining computers that make "fuzzy" decisions, to a novel that grew its own test suite.
 2. **[The tangerine drive](case-study/tangerine-drive/README.md).** A single scene from the novel, start to finish, with every stage on record. My messages are in there too, so you can see what I actually said at each step and what the AI did with it. If you only read one thing, read this.
-3. **[The replay](demo/index.html).** The same scene as a step-through, with my messages on one side and the page on the other, built only from the record. GitHub shows the file as code for now, so open it in a browser after cloning (a hosted link's coming). Next to it there's a [concept page](demo/edit-suite.html) for how the loop would carry over into a video editor.
+3. **[The replay](https://cthleung.github.io/CreatorLoop/demo/).** The same scene as a step-through, with my messages on one side and the page on the other, built only from the record. Next to it there's a [concept page](https://cthleung.github.io/CreatorLoop/demo/edit-suite.html) for how the loop would carry over into a video editor.
 
 ## What's in here
 
@@ -61,7 +61,7 @@ The short version goes like this. I decide what a scene is about and how it shou
 | [`docs/model-experiments.md`](docs/model-experiments.md) | Deploying my own fine-tuned model, why Claude won anyway, and where LoRA adapters come in | Done |
 | [`tools/`](tools/), [`rules/`](rules/), [`evals/`](evals/), [`tests/`](tests/) | The scanner and its demo rule pack, the merge, the blind test and its demo gold set, the repeated-run stats, the preservation diff, the number picker and the tree triage behind the commit skills, all tested. Run `python3 -m unittest` | Done |
 | [`skills/`](skills/) | The 2 skills that run git for me, tree-triage and session-commit, with the script behind them in `tools/` | Done |
-| [`demo/`](demo/) | A clickable replay of the tangerine drive, and a concept page for the same loop in a video editor. Self-contained pages, open them in a browser | Done (hosting later) |
+| [`demo/`](demo/) | A clickable replay of the tangerine drive, and a concept page for the same loop in a video editor, [live here](https://cthleung.github.io/CreatorLoop/demo/) | Done |
 | [`case-study/tangerine-drive/scan/`](case-study/tangerine-drive/scan/) | The tools' output on the case study, rerunnable | Done |
 | [`agents/`](agents/) | The 5 cold reader prompts (voice, gloss, blocking, fact check, and the one that protects what already works), as Claude Code subagents | Done |
 
