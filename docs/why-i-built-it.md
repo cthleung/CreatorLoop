@@ -36,6 +36,8 @@ The same thing kept happening. The AI would write a draft, and the draft would b
 
 So I started writing my taste down where the machine could actually read it. First as a style guide. Then as rules a script could check, then as tests, so that once I'd ruled on something it stayed ruled. Every time I overrode the AI, that override became a case it had to get right from then on. The goal was always to carry my taste forward, so the system is imprinted with it and I don't have to do as much refinement in the future.
 
+I should probably say what the scanners are for, too, since a long list of banned AI tics could look like I'm trying to hide the AI. I'm really not (this whole repo's about writing with one, after all). I've just got pretty specific standards for what good prose sounds like, and most of the AI-isms on that list are things I'd cut from a person's draft too, so the rules are my taste written down, and the point was always to bend the model toward it.
+
 ## Options, then picks
 
 Oh, and the habit that ended up mattering most is a really simple one. When I'm drafting, I always ask for several options. The AI gives me (a), (b) and (c), and I pick 1, or combine 2, or throw them all out and write my own line. That keeps me in charge of every choice that matters, and it means the AI is constantly learning what I'd pick, from thousands of tiny judgments, without me having to explain my taste up front (which I couldn't, anyway; most of the time I only know it when I see it).
