@@ -1,0 +1,61 @@
+# Gold cases for tools/rule_engine.py and rules/default.py. tests/test_rule_engine.py runs every line.
+#
+#   flag | <rule label> | <line>    the engine MUST put this label on the line
+#   pass | <rule label> | <line>    the engine must NOT put this label on the line
+#   pass | *            | <line>    the engine must put NO label at all on the line
+#
+# Every ruling on a rule becomes a pair: the line it should catch, and the line it should leave alone.
+# The pass line is the important one, since it stops the next regex change from creeping into ground
+# that's already been ruled fine.
+
+# ---- house
+flag | em dash | She waited — then left.
+pass | em dash | She waited - then left.
+flag | half (any use) | She waited half an hour.
+pass | half (any use) | She waited thirty minutes.
+
+# ---- invented numbers
+flag | 4/7: counted or invented? | She waited seventeen minutes.
+flag | 4/7: counted or invented? | He'd taken 4,000 pictures.
+pass | 4/7: counted or invented? | She waited twenty minutes.
+flag | invented count | Haeun laughed so hard she had to check her mirror twice.
+pass | invented count | "I've told you twice already," Haeun said.
+
+# ---- hedges: a reflex in narration, voice in dialogue
+flag | hedge | She seemed tired.
+flag | hedge | He was kind of angry.
+pass | hedge | "It's kinda making a really good point," she said.
+pass | hedge | "Okay, that's sort of genius," Seoyun said.
+
+# ---- narrated non-events (from the case study's draft 1)
+flag | non-event | She kept singing under her breath instead of answering.
+flag | non-event | Haeun opened her mouth without taking her eyes off the road.
+flag | non-event | Seoyun's feet stayed where they were.
+pass | non-event | Seoyun opened one eye and crossed her ankles on the dash.
+
+# ---- delivery similes
+flag | delivery simile | "We should go," she said, casual as suggesting lunch.
+flag | delivery simile | "Here," he said, like he was ordering coffee.
+pass | delivery simile | "We should go," she said lightly.
+
+# ---- narrator distance
+flag | filtering | She could feel the car lean into the bend.
+pass | filtering | The car leaned into the bend.
+flag | cognitive shortcut | She clocked the camera on the dash.
+pass | cognitive shortcut | The camera's red light blinked at her.
+flag | language about language | Her voice trailed off.
+pass | language about language | "I'd always wanted to do that, just go somewhere by myself and -"
+
+# ---- signposting
+flag | something hook | Something shifted between them.
+pass | something hook | "Something about flowers reminding her of me," Seoyun said.
+flag | stopwatch | For a moment, neither of them spoke.
+pass | stopwatch | "Give me a second," Haeun said.
+
+# ---- precision emphasis
+flag | precision emphasis | It was exactly the face the instructor had made.
+pass | precision emphasis | "That's exactly what I said!"
+
+# ---- AI register
+flag | AI register | The fog was a tapestry of gray.
+pass | * | The fog tore open on a canola field, then shut again.

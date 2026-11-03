@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tangerine Drive Replay</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="One scene from a novel, replayed from the record: what the author said, what the AI did, and what changed on the page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap">
+<style>
+/* Layout: a session replay. The conversation sits on the left, the page sits on the right,
+   and a step rail across the top shows who acted at each step (tangerine for me, basalt for the AI). */
+:root {
+  --bg: #ECEFEE;
+  --surface: #FAFBF9;
+  --ink: #1C2326;
+  --muted: #5A666B;
+  --rule: #CDD5D6;
+  --me: #D9680B;
+  --me-ink: #A34A04;
+  --me-tint: #FBE6D2;
+  --ai: #44515E;
+  --ai-ink: #3A4652;
+  --ai-tint: #E1E6EB;
+  --hard: #B42318;
+  --hard-tint: #FBE3E0;
+  --check: #7F5A00;
+  --check-tint: #F6ECCB;
+  --ok: #2F6B45;
+  --ok-tint: #DCEDE1;
+  --code-bg: #E4E8E8;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --fs-label: 0.6875rem;
+  --fs-small: 0.8125rem;
+  --fs-ui: 0.9375rem;
+  --fs-prose: 1.0625rem;
+  --fs-h2: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+  --fs-h1: clamp(2.25rem, 1.5rem + 3vw, 3.6rem);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111517; --surface: #192023; --ink: #E5EAEA; --muted: #98A4A9; --rule: #2C3539;
+    --me: #EE8530; --me-ink: #F4A15C; --me-tint: #3A2412;
+    --ai: #8FA3B8; --ai-ink: #B8C7D6; --ai-tint: #232D36;
+    --hard: #F2948A; --hard-tint: #3D1C19; --check: #E4C266; --check-tint: #352C13;
+    --ok: #86CDA0; --ok-tint: #17301F; --code-bg: #20282B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111517; --surface: #192023; --ink: #E5EAEA; --muted: #98A4A9; --rule: #2C3539;
+  --me: #EE8530; --me-ink: #F4A15C; --me-tint: #3A2412;
+  --ai: #8FA3B8; --ai-ink: #B8C7D6; --ai-tint: #232D36;
+  --hard: #F2948A; --hard-tint: #3D1C19; --check: #E4C266; --check-tint: #352C13;
+  --ok: #86CDA0; --ok-tint: #17301F; --code-bg: #20282B;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--me-ink); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--me); outline-offset: 2px; border-radius: 4px; }
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- masthead ---------- */
+.mast { padding-block: 44px 8px; }
+.eyebrow, .pane-label, .step-no, .tag, .who, .rail .no, .rail .dt, .file, .round, .event, .label, .kind {
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+.eyebrow { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--fs-h1);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 10px 0 14px;
+  text-wrap: balance;
+}
+h1 em { font-style: italic; color: var(--me-ink); }
+.lede { font-size: var(--fs-prose); max-width: 66ch; margin: 0; }
+.small { font-size: var(--fs-small); color: var(--muted); max-width: 72ch; margin: 10px 0 0; }
+.meta-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px 20px; margin-top: 22px;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--fs-small); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 18px; height: 6px; border-radius: 3px; background: var(--me); display: inline-block; }
+.sw.ai { background: var(--ai); }
+.mode {
+  display: none; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; background: var(--surface);
+}
+.js .mode { display: inline-flex; }
+.mode button {
+  border: 0; background: transparent; font: inherit; font-size: var(--fs-small);
+  padding: 6px 14px; border-radius: 999px; color: var(--muted); cursor: pointer;
+}
+.mode button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* ---------- step rail ---------- */
+.rail {
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px;
+  margin-block: 26px 10px; padding: 0; list-style: none;
+}
+.rail a {
+  display: flex; flex-direction: column; gap: 1px; height: 100%;
+  padding: 8px 9px 10px; border-radius: 6px; text-decoration: none; color: var(--muted);
+}
+.rail a:hover { background: var(--surface); }
+.rail a[aria-current="step"] { background: var(--surface); box-shadow: inset 0 0 0 1px var(--rule); }
+.rail .no { font-size: var(--fs-label); }
+.rail .nm { font-size: var(--fs-small); color: var(--ink); line-height: 1.25; font-weight: 500; }
+.rail .dt { font-size: var(--fs-label); }
+.bar { display: flex; gap: 2px; height: 5px; margin-top: auto; padding-top: 8px; }
+.bar i { flex: var(--w, 1); border-radius: 2px; background: var(--me); }
+.bar i.ai { background: var(--ai); }
+@media (max-width: 760px) {
+  .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .rail .dt { display: none; }
+}
+
+/* ---------- steps ---------- */
+.step { padding-block: 26px 40px; border-top: 1px solid var(--rule); scroll-margin-top: 12px; }
+.js[data-mode="steps"] .step { border-top: 0; padding-top: 14px; }
+.step-head { display: grid; gap: 10px; margin-bottom: 24px; max-width: 74ch; }
+.step-no { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.actors { display: inline-flex; gap: 6px; }
+.actor { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: var(--fs-small); padding: 1px 9px; border-radius: 999px; background: var(--me-tint); color: var(--me-ink); }
+.actor.ai { background: var(--ai-tint); color: var(--ai-ink); }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--fs-h2); line-height: 1.15; margin: 0; text-wrap: balance; }
+.caption { margin: 0; max-width: 68ch; }
+.principle { margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.tag { font-size: var(--fs-label); text-transform: uppercase; color: var(--me-ink); }
+.principle em { font-family: var(--font-display); font-size: 1.125rem; font-style: italic; }
+
+.panes { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 22px 28px; align-items: start; }
+.panes > * { min-width: 0; }
+.panes.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 880px) { .panes, .panes.even { grid-template-columns: minmax(0, 1fr); } }
+.pane-label { font-size: var(--fs-label); text-transform: uppercase; color: var(--muted); margin: 0 0 10px; font-weight: 500; }
+
+/* conversation */
+.chat { display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 94%; padding: 10px 14px 12px; border-radius: 14px; font-size: var(--fs-ui); line-height: 1.5; }
+.msg.me { align-self: flex-end; background: var(--me-tint); border-bottom-right-radius: 4px; }
+.msg.ai { align-self: flex-start; background: var(--ai-tint); border-bottom-left-radius: 4px; }
+.who { display: block; font-size: var(--fs-label); text-transform: uppercase; margin-bottom: 3px; }
+.me .who { color: var(--me-ink); }
+.ai .who { color: var(--ai-ink); }
+.msg p { margin: 0; }
+.msg p + p, .msg ul { margin-top: 0.5em; }
+.msg ul { padding-left: 1.1em; margin-bottom: 0; }
+.src { display: block; margin-top: 6px; font-size: 0.75rem; color: var(--muted); }
+.src a { color: inherit; }
+.round { align-self: center; font-size: var(--fs-label); text-transform: uppercase; color: var(--muted); padding-top: 6px; }
+.event {
+  align-self: flex-end; font-size: 0.75rem; color: var(--muted);
+  border: 1px dashed var(--rule); padding: 4px 11px; border-radius: 999px;
+}
+.event b { color: var(--me-ink); font-weight: 500; }
+.event.ai { align-self: flex-start; }
+.event.ai b { color: var(--ai-ink); }
+
+/* the page */
+.sheet { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 20px 26px 22px; }
+@media (max-width: 520px) { .sheet { padding: 16px 16px 18px; } }
+.sheet + .sheet { margin-top: 14px; }
+.file {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px;
+  font-size: 0.75rem; color: var(--muted); border-bottom: 1px solid var(--rule);
+  padding-bottom: 10px; margin: 0 0 16px;
+}
+.file a { color: inherit; }
+.prose { font-family: var(--font-display); font-size: var(--fs-prose); line-height: 1.65; margin: 0 0 0.85em; max-width: 64ch; }
+.prose:last-child { margin-bottom: 0; }
+.prose[data-l] { position: relative; padding-left: 3.1em; }
+.prose[data-l]::before {
+  content: attr(data-l); position: absolute; left: 0; top: 0.35em;
+  font-family: var(--font-mono); font-size: var(--fs-label); color: var(--muted);
+}
+.verse { font-style: italic; }
+.credit { font-family: var(--font-body); font-size: var(--fs-small); color: var(--muted); }
+.empty { font-size: var(--fs-small); color: var(--muted); margin: 0 0 14px; }
+
+mark { color: inherit; padding: 0 2px; border-radius: 2px; }
+mark.check { background: var(--check-tint); }
+mark.hard { background: var(--hard-tint); }
+mark.note { background: transparent; border-bottom: 2px solid var(--ai); border-radius: 0; padding: 0; }
+mark.mine { background: transparent; border-bottom: 2px solid var(--me); border-radius: 0; padding: 0; }
+.label { font-size: 0.75rem; white-space: nowrap; padding: 1px 5px; border-radius: 3px; margin-left: 3px; letter-spacing: 0.02em; }
+.label.check { color: var(--check); background: var(--check-tint); }
+.label.hard { color: var(--hard); background: var(--hard-tint); }
+.label.note { color: var(--ai-ink); background: var(--ai-tint); }
+.label.mine { color: var(--me-ink); background: var(--me-tint); }
+.status { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.pill { font-family: var(--font-mono); font-size: 0.75rem; padding: 3px 9px; border-radius: 999px; background: var(--ok-tint); color: var(--ok); }
+.pill.warn { background: var(--check-tint); color: var(--check); }
+.pill.bad { background: var(--hard-tint); color: var(--hard); }
+
+.tally { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; font-size: var(--fs-ui); }
+.tally li { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.tally b { font-family: var(--font-display); font-size: 1.375rem; font-weight: 500; color: var(--ai-ink); font-variant-numeric: tabular-nums; }
+.foot { font-size: var(--fs-small); color: var(--muted); margin: 14px 0 0; }
+
+/* fact check table */
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 10px 9px 0; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.v { font-family: var(--font-mono); font-size: 0.75rem; white-space: nowrap; padding: 1px 6px; border-radius: 3px; }
+.v.wrong { background: var(--hard-tint); color: var(--hard); }
+.v.close { background: var(--check-tint); color: var(--check); }
+.v.unconf { background: var(--code-bg); color: var(--muted); }
+.rulebox { margin: 16px 0 0; font-family: var(--font-display); font-size: var(--fs-prose); font-style: italic; }
+
+/* options */
+.optset + .optset { margin-top: 20px; }
+.optset h4 { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 0 0 8px; }
+.opt { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); gap: 4px 8px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; }
+.opt + .opt { margin-top: 6px; }
+.opt.picked { border-color: var(--me); box-shadow: inset 0 0 0 1px var(--me); }
+.ltr { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--muted); padding-top: 2px; }
+.opt .prose { margin: 0; font-size: 1rem; }
+.chips { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 0.75rem; padding: 1px 8px; border-radius: 999px; background: var(--ai-tint); color: var(--ai-ink); }
+.chip.me { background: var(--me-tint); color: var(--me-ink); }
+.blocking { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: var(--fs-ui); }
+.blocking li::before { content: "+ "; color: var(--me-ink); font-family: var(--font-mono); }
+
+/* change log */
+.log { list-style: none; margin: 0; padding: 0; }
+.log li { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.log li:first-child { padding-top: 0; }
+.log li:last-child { border-bottom: 0; padding-bottom: 0; }
+.log .r { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); padding-top: 3px; }
+.kind { display: inline-block; font-size: var(--fs-label); text-transform: uppercase; padding: 1px 7px; border-radius: 3px; margin-bottom: 4px; }
+.kind.rule { background: var(--ai-tint); color: var(--ai-ink); }
+.kind.kept { background: var(--me-tint); color: var(--me-ink); }
+.kind.fixed { background: var(--check-tint); color: var(--check); }
+.kind.real { background: var(--ok-tint); color: var(--ok); }
+.log .prose { font-size: 1rem; margin: 2px 0 0; }
+.log p.plain { margin: 2px 0 0; font-size: var(--fs-ui); }
+
+/* side by side */
+.compare { display: grid; gap: 26px; }
+.cmp h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.25rem; margin: 0 0 10px; }
+.cmp-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.cmp-pair > * { min-width: 0; }
+.cmp-pair .sheet + .sheet { margin-top: 0; }
+@media (max-width: 760px) { .cmp-pair { grid-template-columns: minmax(0, 1fr); } }
+.cmp .file { margin-bottom: 12px; }
+.cmp-note { font-size: var(--fs-small); color: var(--muted); margin: 8px 0 0; max-width: 72ch; }
+
+/* what stayed */
+.flow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.flow > div { min-width: 0; }
+.flow > div { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.flow > div:first-child { padding-top: 0; }
+.flow > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.flow .k { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+.flow p { margin: 0; font-size: var(--fs-ui); }
+.flow q { font-family: var(--font-display); font-size: 1.0625rem; font-style: italic; quotes: none; }
+pre { margin: 6px 0 0; padding: 10px 12px; background: var(--code-bg); border-radius: 4px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.6; }
+pre .f { color: var(--hard); }
+pre .p { color: var(--ok); }
+code { font-family: var(--font-mono); font-size: 0.85em; }
+
+/* who did what */
+.credits { padding-block: 36px 40px; border-top: 1px solid var(--rule); }
+.credits h2 { margin-bottom: 18px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 28px; }
+.cols > * { min-width: 0; }
+@media (max-width: 640px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+.cols h3 { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 8px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.cols ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: var(--fs-ui); }
+.next-page { margin-top: 26px; font-size: var(--fs-ui); }
+
+/* controls */
+.controls { display: none; position: sticky; bottom: 0; z-index: 5; background: var(--bg); border-top: 1px solid var(--rule); }
+.js[data-mode="steps"] .controls { display: block; }
+.controls .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.btn { font: inherit; font-size: var(--fs-ui); padding: 9px 18px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.count { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--muted); font-variant-numeric: tabular-nums; }
+.hint { display: none; }
+@media (min-width: 900px) { .hint { display: inline; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .js[data-mode="steps"] .step:not([hidden]) { animation: rise 0.28s ease-out; }
+  @keyframes rise { from { opacity: 0.4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+</style>
+</head>
+<body>
+
+<header class="mast wrap">
+  <p class="eyebrow">CreatorLoop · case study replay · Oct 20 to 23, 2026</p>
+  <h1>The <em>tangerine</em> drive</h1>
+  <p class="lede">Here's 1 scene from a novel I'm writing, replayed from the record. On the left is what I said and what the AI sent back, and on the right is what was on the page at that point. I've condensed the steps, but nothing in here is made up - every quote and every line of prose comes from the <a href="../case-study/tangerine-drive/README.md">case study files</a>.</p>
+  <p class="small">My messages are lightly cleaned up (typos and capitals fixed, wording kept), with every name changed. The AI's turns are short summaries of what it produced, and each one links to the file it came from.</p>
+  <div class="meta-row">
+    <div class="legend" aria-label="Legend">
+      <span><i class="sw" aria-hidden="true"></i>Me</span>
+      <span><i class="sw ai" aria-hidden="true"></i>The AI</span>
+    </div>
+    <div class="mode" role="group" aria-label="View">
+      <button type="button" id="mode-steps" aria-pressed="true">Step through</button>
+      <button type="button" id="mode-all" aria-pressed="false">Show all</button>
+    </div>
+  </div>
+  <ol class="rail" aria-label="Steps">
+    <li><a href="#step-1"><span class="no">01</span><span class="nm">A song</span><span class="dt">Oct 20</span><span class="bar" aria-hidden="true"><i></i></span></a></li>
+    <li><a href="#step-2"><span class="no">02</span><span class="nm">The fact check</span><span class="dt">Oct 21</span><span class="bar" aria-hidden="true"><i></i><i class="ai"></i><i></i></span></a></li>
+    <li><a href="#step-3"><span class="no">03</span><span class="nm">Options</span><span class="dt">Oct 21</span><span class="bar" aria-hidden="true"><i class="ai"></i><i></i></span></a></li>
+    <li><a href="#step-4"><span class="no">04</span><span class="nm">Draft 1</span><span class="dt">Oct 21</span><span class="bar" aria-hidden="true"><i class="ai"></i></span></a></li>
+    <li><a href="#step-5"><span class="no">05</span><span class="nm">My review</span><span class="dt">Oct 22</span><span class="bar" aria-hidden="true"><i></i><i class="ai" style="--w:2"></i><i></i></span></a></li>
+    <li><a href="#step-6"><span class="no">06</span><span class="nm">5 rounds</span><span class="dt">Oct 22-23</span><span class="bar" aria-hidden="true"><i style="--w:2"></i><i class="ai"></i></span></a></li>
+    <li><a href="#step-7"><span class="no">07</span><span class="nm">Side by side</span><span class="dt">Oct 23</span><span class="bar" aria-hidden="true"><i class="ai"></i><i></i></span></a></li>
+    <li><a href="#step-8"><span class="no">08</span><span class="nm">What stuck</span><span class="dt">Since</span><span class="bar" aria-hidden="true"><i></i></span></a></li>
+  </ol>
+</header>
+
+<main class="wrap" id="stage">
+
+<!-- ======================= 1 ======================= -->
+<section class="step" id="step-1" aria-labelledby="h-1">
+  <div class="step-head">
+    <div class="step-no">Step 1 of 8 <span class="actors"><span class="actor">Me</span></span></div>
+    <h2 id="h-1">It started with a song</h2>
+    <p class="caption">It started with a song. I'd found a moment in the reference footage where one of the characters sings a line of Nam Jin's "With You," a 1972 trot song about building a house on a green meadow, and I pretty much knew right away I wanted a whole scene set to it, so the AI's only job at this point was the fact check.</p>
+    <p class="principle"><span class="tag">Principle</span><em>The idea is mine, and so is the shape of the scene.</em></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>This is brilliant. We can have a scene around it, set to the music. Can you fact check this?</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Don't draft yet, I want to do the microblocking of the scene myself. But this is a great idea, isn't it?</p><span class="src">from <a href="../case-study/tangerine-drive/01-outline.md">01-outline.md</a></span></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What was on the page</p>
+      <div class="sheet">
+        <p class="file"><span>no draft yet</span><span>the song, verse 1</span></p>
+        <p class="prose verse">I want to build a house like a painting<br>On the green grasslands<br>And live my whole life<br>With my beloved</p>
+        <p class="prose credit">Nam Jin, "님과 함께" ("With You," 1972)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 2 ======================= -->
+<section class="step" id="step-2" aria-labelledby="h-2">
+  <div class="step-head">
+    <div class="step-no">Step 2 of 8 <span class="actors"><span class="actor">Me</span><span class="actor ai">The AI</span></span></div>
+    <h2 id="h-2">Did I remember the footage right?</h2>
+    <p class="caption">My outline was 1 long message, pitched like I'd pitch a scene to a friend, and I'd said myself it needed fact checking. The AI went through the footage and the research notes claim by claim, and a few of my guesses turned out wrong in really useful ways.</p>
+    <p class="principle"><span class="tag">Principle</span><em>A real detail goes in as a prop or a habit, 1 clause, and the narration never explains it.</em></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>Open with Haeun saying "you've been playing that song on repeat, Seoddaeng" while she's driving the car along the foggy Hallasan road. [...]</p><p>Fade out with prose emulating Seoyun's thoughts: tangerines. Ocean. Rock. Ocean. Tangerines.</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Obviously that's very rough and needs a lot of fact checking, but that's what I had in mind for this new scene.</p><span class="src">from <a href="../case-study/tangerine-drive/01-outline.md">01-outline.md</a></span></div>
+        <div class="msg ai"><span class="who">The AI</span><p>Checked 10 claims from the outline against the footage and the research notes, each with a verdict and what it'd change.</p><span class="src">summary of <a href="../case-study/tangerine-drive/02-fact-check.md">02-fact-check.md</a></span></div>
+        <div class="event"><b>My calls:</b> take the real versions, cut the unconfirmed ones</div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What was on the page</p>
+      <div class="sheet">
+        <p class="file"><span>02-fact-check.md</span><span>3 of 10 claims</span></p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>My outline said</th><th>Verdict</th><th>What changed</th></tr></thead>
+            <tbody>
+              <tr><td>They've just come from picking tangerines</td><td><span class="v wrong">wrong season</span></td><td>The show was filmed in March, after the field tangerines are done. The orchard moved to "last time," and a box of hallabong went in the car.</td></tr>
+              <tr><td>Tangerines are "sticky and leave a mark on you"</td><td><span class="v close">close</span></td><td>The real line is that eating too many turns your hands yellow. That went in, and it's better than "sticky."</td></tr>
+              <tr><td>"The things that bring you peace follow you everywhere"</td><td><span class="v unconf">unconfirmed</span></td><td>Cut. The ocean beat says it in Seoyun's own words: "I know. I can still smell it, though."</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 3 ======================= -->
+<section class="step" id="step-3" aria-labelledby="h-3">
+  <div class="step-head">
+    <div class="step-no">Step 3 of 8 <span class="actors"><span class="actor ai">The AI</span><span class="actor">Me</span></span></div>
+    <h2 id="h-3">Give me options, I'll pick</h2>
+    <p class="caption">The AI wrote the scene plan, and wherever a line could go several ways, it gave me lettered options with its own pick first. I choose 1, combine 2, or throw them all out and write my own. I added ideas of my own along the way too (the instant camera was mine).</p>
+    <p class="principle"><span class="tag">Principle</span><em>Every pick is a small recorded judgment about my taste.</em></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg ai"><span class="who">The AI</span><p>Scene plan: 4 movements, with lettered options at 6 decision points (L0-A to L0-F), my recommendation first each time, plus a list of microblocking ideas.</p><span class="src">summary of <a href="../case-study/tangerine-drive/03-scene-plan.md">03-scene-plan.md</a></span></div>
+        <div class="event"><b>Picked</b> (a) at L0-B, L0-C, L0-D and L0-E</div>
+        <div class="msg me"><span class="who">Me</span><p>All in.</p><span class="src">on the microblocking list</span></div>
+        <div class="msg me"><span class="who">Me</span><p>What if it's actually Seoyun's, and in this scene we reveal she gives it to Haeun? (Or rather, she forces it on Haeun, who declines at first, but Seoyun keeps pushing it until they both laugh and Haeun relents.)</p><span class="src">on the instant camera, from <a href="../case-study/tangerine-drive/03-scene-plan.md">03-scene-plan.md</a></span></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What was on the page</p>
+      <div class="sheet">
+        <p class="file"><span>03-scene-plan.md</span><span>movement 3, eyes closed</span></p>
+        <div class="optset">
+          <h4>L0-D · Seoyun's answer: why tangerines remind her of Haeun</h4>
+          <div class="opt picked"><span class="ltr">(a)</span><p class="prose">"No... it's like, if you eat too many, your hands go all yellow, right? And then it doesn't come off for days." She laughed, eyes still shut. "That's you."</p><span class="chips"><span class="chip">the AI's pick</span><span class="chip me">my pick</span></span></div>
+          <div class="opt"><span class="ltr">(b)</span><p class="prose">"Because you make my hands go yellow."</p></div>
+          <div class="opt"><span class="ltr">(c)</span><p class="prose">"Because you're sweet and you make a mess of me."</p></div>
+        </div>
+        <div class="optset">
+          <h4>Microblocking · I took all of it</h4>
+          <ul class="blocking">
+            <li>The eggs rattling on the hairpins, because Haeun takes every bend slowly "for the eggs."</li>
+            <li>The indicator ticking for nobody on an empty mountain road.</li>
+            <li>The house Seoyun draws in the fogged-up window, which the defrost eats in from the edges.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 4 ======================= -->
+<section class="step" id="step-4" aria-labelledby="h-4">
+  <div class="step-head">
+    <div class="step-no">Step 4 of 8 <span class="actors"><span class="actor ai">The AI</span></span></div>
+    <h2 id="h-4">Clean on paper, so where's her voice?</h2>
+    <p class="caption">Then the AI drafted the scene and reviewed it before I saw a word. Its scan found 0 hard problems and 6 soft ones, and it dismissed every soft one with a reason. On paper it was clean, but the girl telling the story barely had a voice, and she kept calling her bandmate "unnie," which she never does anywhere else in the novel.</p>
+    <p class="principle"><span class="tag">Principle</span><em>The AI checks its own work before I look. Voice is still my job.</em></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>A demo of this scene, with a self-review, cleaned up. Check for voice accuracy, tone, atmosphere, mood. It should have a bit of that nostalgic warmth [...] but through Seoyun's younger, more joyful narrative voice.</p><span class="src">from <a href="../case-study/tangerine-drive/04-draft-1.md">04-draft-1.md</a></span></div>
+        <div class="msg ai"><span class="who">The AI</span><p>Draft 1 is done. Self-review: tic scan 0 hard, 6 checks dismissed (the 1972 year, "practically" as hyperbole, "the whole way up" as idiom, "a bit of peel" and "a little house" as literal, and the palindrome as the pending exception).</p><span class="src">from <a href="../case-study/tangerine-drive/04-draft-1.md">04-draft-1.md</a></span></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What was on the page</p>
+      <div class="sheet">
+        <p class="file"><span>04-draft-1.md</span><span>the opening</span></p>
+        <p class="prose" data-l="L37">"Seoddaeng-ah, how many times are you gonna play this?" Haeun asked, laughing, with her seat pulled so far forward that her chin was practically resting on the steering wheel. "It's been this one song the whole way up the mountain."</p>
+        <p class="prose" data-l="L39">Seoyun had her own seat tipped back as far as it would go and her sneakers up on the dash, so the only road she had was a patch of fog between her knees. She kept singing under her breath instead of answering, because the song was good, and Haeun always complained about her music right before she caved and sang along.</p>
+        <p class="prose" data-l="L41">"Because it's GOOD, unnie. Just listen to this part -"</p>
+        <p class="prose" data-l="L43">She went for the high note and missed it by an octave, grinning the whole way up, and Haeun laughed so hard she had to check her mirror twice.</p>
+        <div class="status"><span class="pill">self-review: 0 hard</span><span class="pill">6 checks, all dismissed</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 5 ======================= -->
+<section class="step" id="step-5" aria-labelledby="h-5">
+  <div class="step-head">
+    <div class="step-no">Step 5 of 8 <span class="actors"><span class="actor">Me</span><span class="actor ai">The AI</span></span></div>
+    <h2 id="h-5">My 1-line review</h2>
+    <p class="caption">I can usually name what's wrong in a sentence, because I know what the scene should feel like. The AI can then go through every line and find every instance (which I'd frankly never have the patience for). Nothing changed yet, either, because I'd asked for that on purpose, so the notes went into the plan first and the next draft had a real checklist to work from.</p>
+    <p class="principle"><span class="tag">Principle</span><em>I name what's wrong. The AI finds every instance.</em></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>Let's put this into the plan. Check for non-events and invented numbers, even figurative ones. Also needs way more FID, I think, and Seoyun's terminology. We'll note that into the plan but change nothing for now.</p></div>
+        <div class="msg ai"><span class="who">The AI</span><p>Itemized notes, added to the plan: 13 narrated non-events, every invented number down to "check her mirror twice," 13 spots where Seoyun's inner voice belongs, and none of her own words in it yet.</p><span class="src">summary of <a href="../case-study/tangerine-drive/05-review-notes.md">05-review-notes.md</a></span></div>
+        <div class="msg me"><span class="who">Me</span><p>I still think the opening can open on a black frame. In prose we could do this by just opening with the dialogue, with no tagging? And use names in the dialogue to tell you who's talking.</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Seoyun never calls Haeun unnie in the [novel], btw.</p><span class="src">from <a href="../case-study/tangerine-drive/05-review-notes.md">05-review-notes.md</a></span></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What was on the page</p>
+      <div class="sheet">
+        <p class="file"><span>04-draft-1.md, with the notes on it</span><span><mark class="note">the AI</mark> · <mark class="mine">me</mark></span></p>
+        <p class="prose" data-l="L37">"Seoddaeng-ah, how many times are you gonna play this?" <mark class="mine">Haeun asked, laughing,</mark><span class="label mine">black frame, no tags</span> with her seat pulled so far forward that her chin was practically resting on the steering wheel. "It's been <mark class="note">this one song</mark><span class="label note">number in dialogue</span> the whole way up the mountain."</p>
+        <p class="prose" data-l="L39">Seoyun had her own seat tipped back as far as it would go and her sneakers up on the dash, so the only road she had was a patch of fog between her knees. She kept singing under her breath <mark class="note">instead of answering</mark><span class="label note">non-event</span>, because the song was good, and Haeun always complained about her music right before she caved and sang along.</p>
+        <p class="prose" data-l="L41">"Because it's GOOD, <mark class="mine">unnie</mark><span class="label mine">she never says unnie</span>. Just listen to this part -"</p>
+        <p class="prose" data-l="L43">She went for the high note and missed it <mark class="note">by an octave</mark><span class="label note">figurative measure</span>, grinning the whole way up, and Haeun laughed so hard she had to <mark class="note">check her mirror twice</mark><span class="label note">invented count</span>.</p>
+        <ul class="tally">
+          <li><b>13</b><span>narrated non-events ("she said instead," "without taking her eyes off the road")</span></li>
+          <li><b>13</b><span>spots where her inner voice belongs, like her verdict on her own high note, or her review of her own drawing</span></li>
+          <li><b>0</b><span>of her own words, and every "unnie" becomes Haeddeong (her nickname for Haeun) or Haeun</span></li>
+        </ul>
+        <p class="foot">FID is free indirect discourse, when the narration slips into a character's own head and words. Draft 1 had about 2 lines of it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 6 ======================= -->
+<section class="step" id="step-6" aria-labelledby="h-6">
+  <div class="step-head">
+    <div class="step-no">Step 6 of 8 <span class="actors"><span class="actor">Me</span><span class="actor ai">The AI</span></span></div>
+    <h2 id="h-6">Then 5 rounds of back and forth</h2>
+    <p class="caption">The rest took about a day. The AI redrafted and reviewed itself every round, and I got more hands-on as it went, until I was selecting lines in the editor and asking for changes one at a time. Some of my catches made the rules stricter, and honestly, some pulled the other way.</p>
+    <p class="principle"><span class="tag">Principle</span><em>Keep what works. A rule is there to catch reflexes, and my own designs beat it.</em></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <span class="round">Round 1</span>
+        <div class="msg me"><span class="who">Me</span><p>Also, 'casual as suggesting lunch' type voice-quality similes are banned too. I'd rather just use an adverb.</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Try to do the Tom and Jerry bickering without the characters repeating each other, so be creative about it.</p></div>
+        <span class="round">Round 3</span>
+        <div class="msg me"><span class="who">Me</span><p>What happened to the visual motif of Seoyun looking at the window and seeing both their reflections?</p></div>
+        <div class="msg me"><span class="who">Me</span><p>I just checked the real "house in the mountains" scene, and the real Seoyun says "that'd be nice." Is there some way we can integrate this?</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Linking the scenes with the staccato is super unique (and my design, so staccato is not a problem here).</p></div>
+        <span class="round">Round 4</span>
+        <div class="msg me"><span class="who">Me</span><p>Smirk is fine. We can have some stock-face here and there, for variety and to avoid overwriting/overblocking everything.</p></div>
+        <span class="round">Round 5</span>
+        <div class="msg me"><span class="who">Me</span><p>Also, where did the music box thing come from? Was it made up?</p></div>
+        <div class="msg ai"><span class="who">The AI</span><p>It wasn't. It's in the footage, along with the exact bill.</p><span class="src">all from <a href="../case-study/tangerine-drive/06-revisions.md">06-revisions.md</a></span></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What was on the page</p>
+      <div class="sheet">
+        <p class="file"><span>what each catch changed</span><span>draft 2 to the final</span></p>
+        <ul class="log">
+          <li><span class="r">R1</span><div><span class="kind rule">new rule</span><p class="plain">Delivery similes are out for every chapter after this one. "She said, casual as suggesting lunch" becomes an adverb.</p></div></li>
+          <li><span class="r">R1</span><div><span class="kind rule">new rule</span><p class="plain">Every comeback in a bicker moves sideways and gets crackier, and nobody repeats the other's line back.</p></div></li>
+          <li><span class="r">R3</span><div><span class="kind fixed">restored</span><p class="prose">Against the black, the window turned into a mirror.</p></div></li>
+          <li><span class="r">R3</span><div><span class="kind real">from the footage</span><p class="prose">Seoyun kept her forehead on the glass. "That'd be nice."</p></div></li>
+          <li><span class="r">R3</span><div><span class="kind kept">kept on purpose</span><p class="prose">Tangerines. Ocean. Rock. Ocean. Tangerines.</p></div></li>
+          <li><span class="r">R4</span><div><span class="kind kept">kept on purpose</span><p class="plain">The smirk stays, so the scene doesn't get overblocked.</p></div></li>
+          <li><span class="r">R5</span><div><span class="kind real">checked, and real</span><p class="prose">"You nearly blew 223,700 won on us in one shop."</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 7 ======================= -->
+<section class="step" id="step-7" aria-labelledby="h-7">
+  <div class="step-head">
+    <div class="step-no">Step 7 of 8 <span class="actors"><span class="actor ai">The AI</span><span class="actor">Me</span></span></div>
+    <h2 id="h-7">So was it actually better?</h2>
+    <p class="caption">Every rewrite gets a side by side against the original before it ships, so I can see what the review actually bought (and what got lost on the way). These are 4 of the spots where draft 1 and the final differ.</p>
+    <p class="principle"><span class="tag">Principle</span><em>A rewrite has to beat what the original did well.</em></p>
+  </div>
+  <div class="compare">
+    <div class="cmp">
+      <h3>How it opens</h3>
+      <div class="cmp-pair">
+        <div class="sheet"><p class="file"><span>draft 1</span><span>a tagged line, the narrator sets the scene</span></p>
+          <p class="prose">"Seoddaeng-ah, how many times are you gonna play this?" Haeun asked, laughing, with her seat pulled so far forward that her chin was practically resting on the steering wheel. "It's been this one song the whole way up the mountain."</p></div>
+        <div class="sheet"><p class="file"><span>final</span><span>the black frame I asked for</span></p>
+          <p class="prose">"Seoddaeng-ah, how many times are you gonna play this?"</p>
+          <p class="prose">"Shh, Haeddeong, this is the best part -"</p>
+          <p class="prose">"Hey, you've been saying that since the bottom of the mountain -"</p></div>
+      </div>
+    </div>
+    <div class="cmp">
+      <h3>Does she sound like her now?</h3>
+      <div class="cmp-pair">
+        <div class="sheet"><p class="file"><span>draft 1</span><span>a neutral narrator</span></p>
+          <p class="prose">While the song came back around to the start, Seoyun drew on her side of the glass with one finger, a little house with a pointy roof and lumpy tangerine trees all around it. When they stopped at a junction to let nobody past, Haeun glanced over at it, then back at the road.</p></div>
+        <div class="sheet"><p class="file"><span>final</span><span>a joke where a feeling would go</span></p>
+          <p class="prose">While the song started over, Seoyun drew on her side of the glass with a fingertip, a house with a pointy roof and tangerine trees all round it. The trees came out lumpy.</p>
+          <p class="prose">Haeun glanced over. "Is that a house?"</p>
+          <p class="prose">"It's a potato farm."</p></div>
+      </div>
+    </div>
+    <div class="cmp">
+      <h3>Her feet on the dash</h3>
+      <div class="cmp-pair">
+        <div class="sheet"><p class="file"><span>draft 1</span><span>what she didn't do</span></p>
+          <p class="prose">Seoyun's feet stayed where they were.</p></div>
+        <div class="sheet"><p class="file"><span>final</span><span>what she did</span></p>
+          <p class="prose">Seoyun opened one eye and crossed her ankles on the dash.</p></div>
+      </div>
+    </div>
+    <div class="cmp">
+      <h3>How it ends</h3>
+      <div class="cmp-pair">
+        <div class="sheet"><p class="file"><span>draft 1</span><span>the plan's option (a)</span></p>
+          <p class="prose">Seoyun pressed her forehead to the cold glass beside what was left of the house. "<em>Mm</em>."</p>
+          <p class="prose">"Is that a yes?"</p>
+          <p class="prose">"<em>Mm</em>."</p></div>
+        <div class="sheet"><p class="file"><span>final</span><span>her real reply, from the footage</span></p>
+          <p class="prose">"Is that a yes?"</p>
+          <p class="prose">Seoyun kept her forehead on the glass. "That'd be nice."</p>
+          <p class="prose">Haeun giggled. "Okay, I'm writing that down."</p></div>
+      </div>
+      <p class="cmp-note">The whole final scene is in <a href="../case-study/tangerine-drive/07-final.md">07-final.md</a>, and every line of draft 1's dialogue, kept or reworded or dropped, is in <a href="../case-study/tangerine-drive/scan/draft-1-vs-final.md">the preservation diff</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 8 ======================= -->
+<section class="step" id="step-8" aria-labelledby="h-8">
+  <div class="step-head">
+    <div class="step-no">Step 8 of 8 <span class="actors"><span class="actor">Me</span></span></div>
+    <h2 id="h-8">What stuck around afterward?</h2>
+    <p class="caption">The scene's published now, but the rulings outlived it. Each one went into my style guide, my scanner or its tests, so it applies to every scene I've written since, and the next scene starts a little closer to what I want.</p>
+    <p class="principle"><span class="tag">Principle</span><em>Rulings become rules and tests, so I don't make the same correction twice.</em></p>
+  </div>
+  <div class="panes even">
+    <div>
+      <p class="pane-label">Where 1 of my rulings ended up</p>
+      <div class="sheet">
+        <div class="flow">
+          <div><span class="k">My ruling, round 1</span><p><q>'Casual as suggesting lunch' type voice-quality similes are banned too. I'd rather just use an adverb.</q></p></div>
+          <div><span class="k">The style guide</span><p>Delivery similes are out. Use an adverb.</p></div>
+          <div><span class="k">The scanner</span><p>A <code>delivery simile</code> rule in <a href="../rules/default.py">rules/default.py</a>, so the pattern gets flagged automatically from then on.</p></div>
+          <div><span class="k">The test pair</span><p>1 line the scanner must flag, and 1 it must leave alone, so nobody widens the rule into flagging plain dialogue.</p>
+<pre><span class="f">flag</span> | delivery simile | "We should go," she said, casual as suggesting lunch.
+<span class="p">pass</span> | delivery simile | "We should go," she said lightly.</pre></div>
+          <div><span class="k">A memory note</span><p>Facts that aren't regex material go in a small note the AI reads every session, like <q>Seoyun never calls Haeun unnie.</q></p></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">Draft 1, if I scanned it today</p>
+      <div class="sheet">
+        <p class="file"><span>scan/draft-1-scan.md</span><span>the real output</span></p>
+        <p class="prose" data-l="L39">She kept singing under her breath <mark class="check">instead of answering</mark><span class="label check">[check: non-event]</span>, because the song was good, and Haeun always complained about her music right before she caved and sang along.</p>
+        <p class="prose" data-l="L43">She went for the high note and missed it by an octave, grinning the whole way up, and Haeun laughed so hard she had to <mark class="check">check her mirror twice</mark><span class="label check">[check: invented count]</span>.</p>
+        <p class="prose" data-l="L67">"You weren't even with us for <mark class="hard">half</mark><span class="label hard">[hard: half (any use)]</span> of last time," Seoyun said, flicking a <mark class="check">bit</mark><span class="label check">[check: hedge]</span> of peel at her.</p>
+        <p class="prose" data-l="L111"><mark class="check">Seoyun's feet stayed where they were</mark><span class="label check">[check: non-event]</span>.</p>
+        <div class="status"><span class="pill bad">draft 1: 1 hard</span><span class="pill warn">10 checks, 7 of them non-events</span><span class="pill">final: 0 hard, 4 checks, all fine on a look</span></div>
+        <p class="foot">The demo rules were written after the fact, from this scene's rulings, so of course they catch draft 1. This shows how the mechanism works and doesn't measure anything. The measuring is in <a href="../docs/evaluation.md">evaluation.md</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<section class="credits wrap" aria-labelledby="h-credits">
+  <h2 id="h-credits">So who did what?</h2>
+  <div class="cols">
+    <div>
+      <h3><i class="sw" aria-hidden="true"></i>Me</h3>
+      <ul>
+        <li>The idea, and the song it came from</li>
+        <li>The outline, and the calls on the fact check</li>
+        <li>The picks, the microblocking calls and the instant camera</li>
+        <li>The 1-line review, the black frame and "she never says unnie"</li>
+        <li>The catches in every round, and the line edits</li>
+        <li>The rulings that became rules</li>
+      </ul>
+    </div>
+    <div>
+      <h3><i class="sw ai" aria-hidden="true"></i>The AI</h3>
+      <ul>
+        <li>The research behind the fact check</li>
+        <li>The scene plan and its lettered options</li>
+        <li>Draft 1 and every redraft</li>
+        <li>The self-reviews and the scans</li>
+        <li>The itemized sweep of every line</li>
+      </ul>
+    </div>
+  </div>
+  <p class="next-page">This page only exists because nothing got thrown away. The plan file kept draft 1 next to my dated decisions, and the chat transcripts kept my words, while git only had 1 commit for the whole chapter. That gap is part of why I think <a href="../docs/version-control.md">version control for creators</a> should track decisions.</p>
+  <p class="next-page">Next: <a href="edit-suite.html">the same loop in an edit suite</a>, a concept for photo and video. Or read the full walkthrough in <a href="../case-study/tangerine-drive/README.md">the case study</a>.</p>
+</section>
+
+<nav class="controls" aria-label="Step controls">
+  <div class="wrap">
+    <button type="button" class="btn" id="prev">Back</button>
+    <span class="count" id="count" aria-live="polite">1 / 8</span>
+    <span class="hint count">arrow keys work too</span>
+    <button type="button" class="btn primary" id="next">Next</button>
+  </div>
+</nav>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  var prev = document.getElementById("prev");
+  var next = document.getElementById("next");
+  var count = document.getElementById("count");
+  var btnSteps = document.getElementById("mode-steps");
+  var btnAll = document.getElementById("mode-all");
+  var mode = "steps";
+  try { mode = localStorage.getItem("replay-mode") === "all" ? "all" : "steps"; } catch (e) {}
+  root.classList.add("js");
+
+  function current() {
+    var m = /^#step-(\d+)$/.exec(location.hash);
+    var n = m ? parseInt(m[1], 10) : 1;
+    return Math.min(Math.max(n, 1), steps.length);
+  }
+  function render() {
+    var n = current();
+    root.setAttribute("data-mode", mode);
+    steps.forEach(function (s, i) { s.hidden = mode === "steps" && i !== n - 1; });
+    links.forEach(function (a, i) {
+      if (mode === "steps" && i === n - 1) a.setAttribute("aria-current", "step");
+      else a.removeAttribute("aria-current");
+    });
+    count.textContent = n + " / " + steps.length;
+    prev.disabled = n === 1;
+    next.disabled = n === steps.length;
+    btnSteps.setAttribute("aria-pressed", String(mode === "steps"));
+    btnAll.setAttribute("aria-pressed", String(mode === "all"));
+  }
+  function go(n) {
+    n = Math.min(Math.max(n, 1), steps.length);
+    location.hash = "step-" + n;
+  }
+  function setMode(m) {
+    mode = m;
+    try { localStorage.setItem("replay-mode", m); } catch (e) {}
+    render();
+  }
+  prev.addEventListener("click", function () { go(current() - 1); });
+  next.addEventListener("click", function () { go(current() + 1); });
+  btnSteps.addEventListener("click", function () { setMode("steps"); });
+  btnAll.addEventListener("click", function () { setMode("all"); });
+  window.addEventListener("hashchange", render);
+  document.addEventListener("keydown", function (e) {
+    if (mode !== "steps" || e.altKey || e.ctrlKey || e.metaKey) return;
+    var t = e.target && e.target.tagName;
+    if (t === "INPUT" || t === "TEXTAREA") return;
+    if (e.key === "ArrowRight") { go(current() + 1); }
+    if (e.key === "ArrowLeft") { go(current() - 1); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>

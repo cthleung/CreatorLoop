@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CreatorLoop Edit Suite</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A concept: the CreatorLoop workflow carried over to video editing, with an agent that plans on a copy and learns from accepts, tweaks and reverts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap">
+<style>
+/* Layout: the replay's 2 panes again. The conversation sits on the left, the suite sits on the right
+   (shot order, previews and a drawn timeline), and the step rail shows who acted. Same palette as the replay. */
+:root {
+  --bg: #ECEFEE;
+  --surface: #FAFBF9;
+  --ink: #1C2326;
+  --muted: #5A666B;
+  --rule: #CDD5D6;
+  --me: #D9680B;
+  --me-ink: #A34A04;
+  --me-tint: #FBE6D2;
+  --ai: #44515E;
+  --ai-ink: #3A4652;
+  --ai-tint: #E1E6EB;
+  --ok: #2F6B45;
+  --ok-tint: #DCEDE1;
+  --code-bg: #E4E8E8;
+  --lane: #E2E7E7;
+  --clip-v: #C7D2DC;
+  --clip-a: #C9DACF;
+  --clip-ink: #1C2326;
+  --screen: #0E1315;
+  --screen-ink: #C8D2D5;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --fs-label: 0.6875rem;
+  --fs-small: 0.8125rem;
+  --fs-ui: 0.9375rem;
+  --fs-prose: 1.0625rem;
+  --fs-h2: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+  --fs-h1: clamp(2.1rem, 1.4rem + 2.8vw, 3.3rem);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111517; --surface: #192023; --ink: #E5EAEA; --muted: #98A4A9; --rule: #2C3539;
+    --me: #EE8530; --me-ink: #F4A15C; --me-tint: #3A2412;
+    --ai: #8FA3B8; --ai-ink: #B8C7D6; --ai-tint: #232D36;
+    --ok: #86CDA0; --ok-tint: #17301F; --code-bg: #20282B;
+    --lane: #1E2528; --clip-v: #2F3B47; --clip-a: #2B3C32; --clip-ink: #E5EAEA;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111517; --surface: #192023; --ink: #E5EAEA; --muted: #98A4A9; --rule: #2C3539;
+  --me: #EE8530; --me-ink: #F4A15C; --me-tint: #3A2412;
+  --ai: #8FA3B8; --ai-ink: #B8C7D6; --ai-tint: #232D36;
+  --ok: #86CDA0; --ok-tint: #17301F; --code-bg: #20282B;
+  --lane: #1E2528; --clip-v: #2F3B47; --clip-a: #2B3C32; --clip-ink: #E5EAEA;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--me-ink); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--me); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.eyebrow, .pane-label, .step-no, .tag, .who, .rail .no, .file, .round, .event, .tl-head, .tl-name, .tl-ruler span, .strip span, .badge, .mon figcaption {
+  font-family: var(--font-mono); letter-spacing: 0.06em;
+}
+
+/* masthead */
+.mast { padding-block: 44px 8px; }
+.eyebrow { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 500; font-size: var(--fs-h1); line-height: 1.05; letter-spacing: -0.015em; margin: 10px 0 14px; text-wrap: balance; }
+h1 em { font-style: italic; color: var(--me-ink); }
+.lede { font-size: var(--fs-prose); max-width: 66ch; margin: 0; }
+.concept {
+  display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline;
+  margin: 18px 0 0; padding: 10px 14px; border: 1px dashed var(--ai); border-radius: 6px;
+  font-size: var(--fs-small); max-width: 74ch;
+}
+.concept b { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ai-ink); font-weight: 500; }
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin-top: 22px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--fs-small); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 18px; height: 6px; border-radius: 3px; background: var(--me); display: inline-block; }
+.sw.ai { background: var(--ai); }
+.mode { display: none; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; background: var(--surface); }
+.js .mode { display: inline-flex; }
+.mode button { border: 0; background: transparent; font: inherit; font-size: var(--fs-small); padding: 6px 14px; border-radius: 999px; color: var(--muted); cursor: pointer; }
+.mode button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* rail */
+.rail { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-block: 26px 10px; padding: 0; list-style: none; }
+.rail a { display: flex; flex-direction: column; gap: 1px; height: 100%; padding: 8px 9px 10px; border-radius: 6px; text-decoration: none; color: var(--muted); }
+.rail a:hover { background: var(--surface); }
+.rail a[aria-current="step"] { background: var(--surface); box-shadow: inset 0 0 0 1px var(--rule); }
+.rail .no { font-size: var(--fs-label); }
+.rail .nm { font-size: var(--fs-small); color: var(--ink); line-height: 1.25; font-weight: 500; }
+.bar { display: flex; gap: 2px; height: 5px; margin-top: auto; padding-top: 8px; }
+.bar i { flex: var(--w, 1); border-radius: 2px; background: var(--me); }
+.bar i.ai { background: var(--ai); }
+@media (max-width: 760px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* steps */
+.step { padding-block: 26px 40px; border-top: 1px solid var(--rule); scroll-margin-top: 12px; }
+.js[data-mode="steps"] .step { border-top: 0; padding-top: 14px; }
+.step-head { display: grid; gap: 10px; margin-bottom: 24px; max-width: 74ch; }
+.step-no { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.actors { display: inline-flex; gap: 6px; }
+.actor { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: var(--fs-small); padding: 1px 9px; border-radius: 999px; background: var(--me-tint); color: var(--me-ink); }
+.actor.ai { background: var(--ai-tint); color: var(--ai-ink); }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--fs-h2); line-height: 1.15; margin: 0; text-wrap: balance; }
+.caption { margin: 0; max-width: 68ch; }
+.principle, .bridge { margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.tag { font-size: var(--fs-label); text-transform: uppercase; color: var(--me-ink); }
+.bridge .tag { color: var(--muted); }
+.principle em { font-family: var(--font-display); font-size: 1.125rem; font-style: italic; }
+.bridge { font-size: var(--fs-small); }
+
+.panes { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 22px 28px; align-items: start; }
+.panes > * { min-width: 0; }
+@media (max-width: 880px) { .panes { grid-template-columns: minmax(0, 1fr); } }
+.pane-label { font-size: var(--fs-label); text-transform: uppercase; color: var(--muted); margin: 0 0 10px; font-weight: 500; }
+
+/* conversation */
+.chat { display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 94%; padding: 10px 14px 12px; border-radius: 14px; font-size: var(--fs-ui); line-height: 1.5; }
+.msg.me { align-self: flex-end; background: var(--me-tint); border-bottom-right-radius: 4px; }
+.msg.ai { align-self: flex-start; background: var(--ai-tint); border-bottom-left-radius: 4px; }
+.who { display: block; font-size: var(--fs-label); text-transform: uppercase; margin-bottom: 3px; }
+.me .who { color: var(--me-ink); }
+.ai .who { color: var(--ai-ink); }
+.msg p { margin: 0; }
+.msg p + p, .msg ol { margin-top: 0.5em; }
+.msg ol { padding-left: 1.3em; margin-bottom: 0; display: grid; gap: 2px; }
+.round { align-self: center; font-size: var(--fs-label); text-transform: uppercase; color: var(--muted); padding-top: 6px; }
+.event { align-self: flex-end; font-size: 0.75rem; color: var(--muted); border: 1px dashed var(--rule); padding: 4px 11px; border-radius: 999px; }
+.event b { color: var(--me-ink); font-weight: 500; }
+.verdicts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; align-self: stretch; }
+.verdicts li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 2px 10px; align-items: baseline; padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--rule); font-size: var(--fs-ui); }
+.verdicts .n { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+.verdicts .v { grid-column: 2; font-size: var(--fs-small); }
+.v.ok { color: var(--ok); }
+.v.mine { color: var(--me-ink); }
+
+/* the suite */
+.sheet { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 18px 20px 20px; }
+@media (max-width: 520px) { .sheet { padding: 14px 14px 16px; } }
+.file { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 0.75rem; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 10px; margin: 0 0 14px; }
+.sub { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+.sub:first-of-type { margin-top: 0; }
+
+.strip { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.strip li { min-width: 0; display: grid; gap: 4px; position: relative; }
+.strip span { font-size: 0.625rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.thumb { aspect-ratio: 16 / 9; max-width: 100%; background: var(--screen); color: var(--screen-ink); border-radius: 3px; overflow: hidden; }
+.thumb svg, .screen svg { display: block; width: 100%; height: 100%; }
+.strip li.new .thumb { outline: 2px dashed var(--ai); outline-offset: 2px; }
+.strip li.mine .thumb { outline: 2px solid var(--me); outline-offset: 2px; }
+.badge { position: absolute; top: -7px; right: -5px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--ai); color: var(--surface); font-size: 0.625rem; display: grid; place-items: center; letter-spacing: 0; }
+.badge.mine { background: var(--me); }
+
+.mons { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.mons.one { grid-template-columns: minmax(0, 1fr); max-width: 420px; }
+.mon { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.screen { aspect-ratio: 16 / 9; max-width: 100%; background: var(--screen); color: var(--screen-ink); border-radius: 4px; overflow: hidden; }
+.mon.picked .screen { outline: 2px solid var(--me); outline-offset: 3px; }
+.mon figcaption { font-size: 0.6875rem; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.mon figcaption b { color: var(--me-ink); font-weight: 500; }
+@media (prefers-reduced-motion: no-preference) {
+  .push .scene { animation: push 5s ease-in-out infinite alternate; transform-origin: 80px 46px; }
+  @keyframes push { to { transform: scale(1.16); } }
+}
+
+.tl-scroll { overflow-x: auto; padding-bottom: 4px; }
+.tl { min-width: 560px; display: grid; gap: 5px; }
+.tl-head { display: flex; justify-content: space-between; gap: 10px; font-size: 0.6875rem; color: var(--muted); text-transform: uppercase; }
+.tl-ruler { position: relative; height: 14px; margin-left: 3.4em; }
+.tl-ruler span { position: absolute; top: 0; transform: translateX(-50%); font-size: 0.625rem; color: var(--muted); letter-spacing: 0; }
+.tl-ruler span:first-child { transform: none; }
+.tl-ruler span:last-child { transform: translateX(-100%); }
+.tl-row { display: grid; grid-template-columns: 3.4em minmax(0, 1fr); align-items: center; }
+.tl-name { font-size: 0.6875rem; color: var(--muted); }
+.tl-lane { position: relative; height: 30px; background: var(--lane); border-radius: 3px; }
+.clip { position: absolute; top: 3px; bottom: 3px; border-radius: 3px; background: var(--clip-v); color: var(--clip-ink); font-size: 0.6875rem; line-height: 1; padding: 0 6px; display: flex; align-items: center; overflow: visible; white-space: nowrap; }
+.clip > span { overflow: hidden; text-overflow: ellipsis; }
+.clip.a { background: var(--clip-a); }
+.clip.new { outline: 1.5px dashed var(--ai); outline-offset: -1.5px; }
+.clip.mine { box-shadow: inset 0 0 0 2px var(--me); }
+.clip .badge { top: -8px; right: -6px; z-index: 3; }
+.cutline { position: absolute; top: -2px; bottom: -2px; width: 0; border-left: 1px dashed var(--muted); opacity: 0.6; }
+.tl-key { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.75rem; color: var(--muted); margin-top: 10px; }
+.tl-key span { display: inline-flex; gap: 6px; align-items: center; }
+.k-box { width: 16px; height: 10px; border-radius: 2px; background: var(--clip-v); display: inline-block; }
+.k-box.new { outline: 1.5px dashed var(--ai); outline-offset: -1.5px; }
+.k-box.mine { box-shadow: inset 0 0 0 2px var(--me); }
+
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: var(--fs-ui); }
+.checks li { display: grid; grid-template-columns: 3em minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.checks .ok { color: var(--ok); font-family: var(--font-mono); }
+.checks .keep { color: var(--me-ink); font-family: var(--font-mono); }
+.changes { margin: 0; padding-left: 1.3em; display: grid; gap: 3px; font-size: var(--fs-ui); }
+pre { margin: 0; padding: 12px 14px; background: var(--code-bg); border-radius: 4px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.6; }
+.measures { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: var(--fs-ui); }
+.measures li { display: grid; grid-template-columns: 3.6em minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.measures b { font-family: var(--font-display); font-size: 1.375rem; font-weight: 500; color: var(--ai-ink); font-variant-numeric: tabular-nums; }
+.foot { font-size: var(--fs-small); color: var(--muted); margin: 14px 0 0; }
+
+.outro { padding-block: 36px 40px; border-top: 1px solid var(--rule); }
+.outro p { max-width: 68ch; margin: 0 0 10px; }
+
+/* session history graph */
+.graph { display: grid; gap: 10px; }
+.g-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.g-toggle { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: 0.75rem; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; }
+.g-toggle[aria-pressed="true"] { background: var(--ai); color: var(--surface); border-color: var(--ai); }
+.g-body { position: relative; }
+.g-lines { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.g-list { list-style: none; margin: 0; padding: 0 0 0 76px; display: grid; gap: 8px; }
+.g-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: start; min-height: 36px; }
+.g-thumb { width: 56px; aspect-ratio: 16 / 9; max-width: 100%; background: var(--screen); color: var(--screen-ink); border-radius: 3px; overflow: hidden; margin-top: 2px; }
+.g-thumb svg { display: block; width: 100%; height: 100%; }
+.g-thumb.none { background: transparent; }
+.g-text { min-width: 0; }
+.g-msg { margin: 0; font-size: var(--fs-small); line-height: 1.35; }
+.g-meta { margin: 1px 0 0; font-size: 0.75rem; color: var(--muted); }
+.g-git { display: none; margin-top: 3px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ai-ink); overflow-wrap: anywhere; }
+.graph.git .g-git { display: block; }
+.g-chip { margin-left: 6px; font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.04em; padding: 1px 6px; border-radius: 3px; background: var(--code-bg); color: var(--muted); white-space: nowrap; vertical-align: 1px; }
+.g-chip.me { background: var(--me-tint); color: var(--me-ink); }
+.s-reverted .g-msg, .s-dropped .g-msg { color: var(--muted); }
+.g-edge { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.g-edge.main { stroke-dasharray: 3 4; opacity: 0.7; }
+.g-edge.dropped { stroke-dasharray: 3 3; }
+.g-node { stroke-width: 1.5; }
+.g-node.base { fill: var(--surface); stroke: var(--ink); }
+.g-node.agent { fill: var(--ai); stroke: var(--ai); }
+.g-node.me, .g-node.merge { fill: var(--me); stroke: var(--me); }
+.g-node.dropped, .g-node.reverted { fill: var(--surface); stroke: var(--ai); }
+.g-node.dropped { stroke-dasharray: 2 2; }
+.g-ring { fill: none; stroke: var(--me); stroke-width: 1.5; }
+.g-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.75rem; color: var(--muted); }
+.g-legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: -1px; background: var(--ai); }
+.g-legend i.me { background: var(--me); }
+.g-legend i.base { background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--ink); }
+
+/* plain words and the git underneath */
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); min-width: 420px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td code { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ai-ink); }
+
+/* preferences */
+.prefs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.prefs li { padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; display: grid; gap: 3px; }
+.prefs li.retired { border-style: dashed; }
+.p-head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; justify-content: space-between; }
+.p-name { font-size: var(--fs-ui); font-weight: 500; }
+.retired .p-name { text-decoration: line-through; text-decoration-color: var(--me); color: var(--muted); }
+.p-from { font-size: var(--fs-small); color: var(--muted); margin: 0; }
+.prefs code { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ai-ink); overflow-wrap: anywhere; }
+.state { font-family: var(--font-mono); font-size: 0.6875rem; padding: 1px 7px; border-radius: 3px; background: var(--ok-tint); color: var(--ok); white-space: nowrap; }
+.state.off { background: var(--me-tint); color: var(--me-ink); }
+
+/* the library: sorting and search */
+.search { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--rule); border-radius: 999px; font-size: var(--fs-small); background: var(--bg); }
+.search svg { width: 14px; height: 14px; flex: none; color: var(--muted); }
+.search span { min-width: 0; }
+.bins { display: flex; flex-wrap: wrap; gap: 6px; }
+.bin { font-family: var(--font-mono); font-size: 0.7rem; padding: 3px 9px; border-radius: 4px; background: var(--code-bg); color: var(--muted); }
+.bin.hit { background: var(--me-tint); color: var(--me-ink); }
+.bin.flag { background: var(--ai-tint); color: var(--ai-ink); }
+.hits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-width: 340px; }
+.hits figure { margin: 0; display: grid; gap: 4px; min-width: 0; }
+.hits .thumb { outline: 2px solid var(--me); outline-offset: 2px; }
+.hits figcaption { font-family: var(--font-mono); font-size: 0.625rem; color: var(--muted); }
+.lib { display: grid; gap: 10px; padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--rule); }
+
+/* controls */
+.controls { display: none; position: sticky; bottom: 0; z-index: 5; background: var(--bg); border-top: 1px solid var(--rule); }
+.js[data-mode="steps"] .controls { display: block; }
+.controls .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.btn { font: inherit; font-size: var(--fs-ui); padding: 9px 18px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.count { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--muted); font-variant-numeric: tabular-nums; }
+.hint { display: none; }
+@media (min-width: 900px) { .hint { display: inline; } }
+@media (prefers-reduced-motion: no-preference) {
+  .js[data-mode="steps"] .step:not([hidden]) { animation: rise 0.28s ease-out; }
+  @keyframes rise { from { opacity: 0.4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+</style>
+</head>
+<body>
+
+<header class="mast wrap">
+  <p class="eyebrow">CreatorLoop · concept · not built</p>
+  <h1>What if my <em>edit suite</em> worked like this?</h1>
+  <p class="lede">Nothing in my loop is really about prose, so this page carries it over to video. As a filmmaker, what I want is the thing I already have in my code editor, an assistant editor with hands, which comes back with a plan and lets me keep the taste. The example is the one from <a href="../docs/beyond-text.md">beyond-text.md</a>, a scene where the reveal comes too early, and every step links back to the part of the <a href="index.html">tangerine drive replay</a> it's built on.</p>
+  <p class="concept"><b>Concept</b><span>None of this software exists yet. The frames are line drawings, the timeline's simplified, and the scene is an illustration. The replay is the part that really happened.</span></p>
+  <div class="meta-row">
+    <div class="legend" aria-label="Legend">
+      <span><i class="sw" aria-hidden="true"></i>Me</span>
+      <span><i class="sw ai" aria-hidden="true"></i>The agent</span>
+    </div>
+    <div class="mode" role="group" aria-label="View">
+      <button type="button" id="mode-steps" aria-pressed="true">Step through</button>
+      <button type="button" id="mode-all" aria-pressed="false">Show all</button>
+    </div>
+  </div>
+  <ol class="rail" aria-label="Steps">
+    <li><a href="#step-1"><span class="no">01</span><span class="nm">The ask</span><span class="bar" aria-hidden="true"><i></i></span></a></li>
+    <li><a href="#step-2"><span class="no">02</span><span class="nm">The plan</span><span class="bar" aria-hidden="true"><i class="ai"></i></span></a></li>
+    <li><a href="#step-3"><span class="no">03</span><span class="nm">A or B</span><span class="bar" aria-hidden="true"><i class="ai"></i><i></i></span></a></li>
+    <li><a href="#step-4"><span class="no">04</span><span class="nm">Checks</span><span class="bar" aria-hidden="true"><i class="ai"></i></span></a></li>
+    <li><a href="#step-5"><span class="no">05</span><span class="nm">My verdicts</span><span class="bar" aria-hidden="true"><i></i><i class="ai"></i></span></a></li>
+    <li><a href="#step-6"><span class="no">06</span><span class="nm">The history</span><span class="bar" aria-hidden="true"><i></i><i class="ai"></i></span></a></li>
+    <li><a href="#step-7"><span class="no">07</span><span class="nm">Memory</span><span class="bar" aria-hidden="true"><i class="ai"></i><i></i></span></a></li>
+  </ol>
+</header>
+
+<main class="wrap">
+<noscript><p class="foot">The drawn frames and timelines need JavaScript. The conversation on each step reads fine without it.</p></noscript>
+
+<!-- ======================= 1 ======================= -->
+<section class="step" id="step-1" aria-labelledby="h-1">
+  <div class="step-head">
+    <div class="step-no">Step 1 of 7 <span class="actors"><span class="actor">Me</span></span></div>
+    <h2 id="h-1">What's wrong with this cut?</h2>
+    <p class="caption">I tell it what's wrong in a sentence, like I'd tell an assistant editor. I usually know what the scene should feel like, but the gap is all the panels/commands/menus between that and the result, which is the part I'd love to hand off.</p>
+    <p class="principle"><span class="tag">Principle</span><em>I say what's wrong. The agent works out the steps.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="index.html#step-5">my 1-line review of draft 1</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>The reveal's happening too early. Hold her face back, open on the empty hallway, and let the door sound carry across the cut.</p></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>timeline v2</span><span>the working cut</span></p>
+        <p class="sub">Shot order</p>
+        <div data-render="strip:v2"></div>
+        <p class="sub">Timeline</p>
+        <div data-render="timeline:v2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 2 ======================= -->
+<section class="step" id="step-2" aria-labelledby="h-2">
+  <div class="step-head">
+    <div class="step-no">Step 2 of 7 <span class="actors"><span class="actor ai">The agent</span></span></div>
+    <h2 id="h-2">Show me the plan first (on a copy, please)</h2>
+    <p class="caption">Before it touches anything, it comes back with a plan, and every change lands on a duplicate, so the working cut stays as it was and I can always go back to it. A timeline's a lot easier to wreck than a paragraph, but if every edit can be undone, I can let the agent try bolder things.</p>
+    <p class="principle"><span class="tag">Principle</span><em>Every edit lands on a copy, and I can always go back.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="index.html#step-3">the scene plan, written before any prose</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg ai"><span class="who">The agent</span><p>Here's the plan. It all happens on a copy, and v2 stays as it is.</p>
+          <ol>
+            <li>Duplicate the current timeline.</li>
+            <li>Move the close-up later.</li>
+            <li>Insert 2 candidate hallway shots.</li>
+            <li>Extend the room tone under the transition.</li>
+            <li>Keep the dialogue in sync, and render a preview with every change listed.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>timeline v3, a copy of v2</span><span>proposed</span></p>
+        <p class="sub">Shot order</p>
+        <div data-render="strip:proposed"></div>
+        <p class="sub">Timeline</p>
+        <div data-render="timeline:proposed"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 3 ======================= -->
+<section class="step" id="step-3" aria-labelledby="h-3">
+  <div class="step-head">
+    <div class="step-no">Step 3 of 7 <span class="actors"><span class="actor ai">The agent</span><span class="actor">Me</span></span></div>
+    <h2 id="h-3">A or B? I'll know when I see it</h2>
+    <p class="caption">First it has to find them. It sorted my footage into bins when I imported it, by scene and by what's in the shot, so I can search it like I'd describe a clip out loud, and the hallway search turned up 2 takes. Then it plays both side by side. I recognize what I want long before I can explain it, so I think a glance at both tells me more than any description would. And a pick like that says way more than a thumbs up ever could.</p>
+    <p class="principle"><span class="tag">Principle</span><em>Options, then picks.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="index.html#step-3">lettered options, with the AI's pick first</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg ai"><span class="who">The agent</span><p>Your footage is sorted into bins from the import, by scene and subject, with the clips that have sync or focus problems in a bin of their own. I searched it for "the empty hallway, before anyone walks in" and got 2 good takes.</p></div>
+        <div class="msg ai"><span class="who">The agent</span><p>2 hallway candidates for the head of the cut. A holds still, and B pushes in slowly toward the door at the end.</p></div>
+        <div class="event"><b>Picked</b> B</div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>library</span><span>sorted on import</span></p>
+        <div class="lib">
+          <div class="search" role="img" aria-label="Search: the empty hallway, before anyone walks in"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 10.5 L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>"the empty hallway, before anyone walks in"</span></div>
+          <div class="bins" aria-label="Bins">
+            <span class="bin hit">scene: the hallway</span><span class="bin">scene: the room</span><span class="bin">subject: her</span><span class="bin">subject: the door</span><span class="bin">b-roll</span><span class="bin flag">problems: sync or focus</span>
+          </div>
+          <div class="hits">
+            <figure><div class="thumb" data-render="frame:hall"></div><figcaption>hit · becomes A</figcaption></figure>
+            <figure><div class="thumb" data-render="frame:hall"></div><figcaption>hit · becomes B</figcaption></figure>
+          </div>
+        </div>
+        <p class="file"><span>preview</span><span>the first 5 seconds of v3</span></p>
+        <div class="mons">
+          <figure class="mon"><div class="screen" data-render="frame:hall"></div><figcaption><span>A · holds still</span></figcaption></figure>
+          <figure class="mon picked push"><div class="screen" data-render="frame:hall"></div><figcaption><span>B · slow push in</span><b>my pick</b></figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 4 ======================= -->
+<section class="step" id="step-4" aria-labelledby="h-4">
+  <div class="step-head">
+    <div class="step-no">Step 4 of 7 <span class="actors"><span class="actor ai">The agent</span></span></div>
+    <h2 id="h-4">Did anything break before I look?</h2>
+    <p class="caption">Before I spend any attention on it, the boring objective stuff gets checked, so when I sit down to judge, I'm judging the creative call. The agent also says what it left alone on purpose, because "fix everything" in an edit suite means smoothing every texture, and sometimes the grain's the point.</p>
+    <p class="principle"><span class="tag">Principle</span><em>The machine catches the objective stuff, and it protects what I did on purpose.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="index.html#step-4">the self-review and the scan</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg ai"><span class="who">The agent</span><p>The preview's rendered, with every change listed. The checks passed, and I left 2 things alone on purpose.</p></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>v3 preview</span><span>ready for review</span></p>
+        <div class="mons one"><figure class="mon push"><div class="screen" data-render="frame:hall"></div><figcaption><span>v3 · first frame · hallway B</span></figcaption></figure></div>
+        <p class="sub">Checks</p>
+        <ul class="checks">
+          <li><span class="ok">ok</span><span>Dialogue still in sync with its picture</span></li>
+          <li><span class="ok">ok</span><span>No dropped or duplicate frames</span></li>
+          <li><span class="ok">ok</span><span>Loudness within the delivery spec</span></li>
+          <li><span class="ok">ok</span><span>Room tone runs under the cut with no gap</span></li>
+        </ul>
+        <p class="sub">Left alone on purpose</p>
+        <ul class="checks">
+          <li><span class="keep">kept</span><span>The grain in the hallway shot</span></li>
+          <li><span class="keep">kept</span><span>The handheld drift in the door shot</span></li>
+        </ul>
+        <p class="sub">Everything it changed</p>
+        <ol class="changes">
+          <li>v2 duplicated to v3</li>
+          <li>The close-up moved after the door shot</li>
+          <li>Hallway B inserted at the head</li>
+          <li>Room tone extended under the transition</li>
+          <li>Dialogue moved with its picture</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 5 ======================= -->
+<section class="step" id="step-5" aria-labelledby="h-5">
+  <div class="step-head">
+    <div class="step-no">Step 5 of 7 <span class="actors"><span class="actor">Me</span><span class="actor ai">The agent</span></span></div>
+    <h2 id="h-5">Keep B, and put the close-up back</h2>
+    <p class="caption">Then I give my verdicts in plain words, and the agent works out what they mean for the history. Every step it took is its own commit, so putting the close-up back takes back that 1 decision and leaves the hallway, the room tone and the dialogue sync alone, which an ordinary undo stack can't do.</p>
+    <p class="principle"><span class="tag">Principle</span><em>Every decision is its own step, so I can take back 1 without losing the rest.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="index.html#step-6">my catches in the revision rounds</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>Keep hallway B. Put the close-up back where it was, and stretch the room tone further than that.</p></div>
+        <div class="msg ai"><span class="who">The agent</span><p>Here's what that does to the history before I touch anything. I'll undo step 2 on its own, so the hallway, the room tone and the dialogue sync all stay, and your stretch goes on top as a step of its own.</p></div>
+        <div class="event"><b>Approved</b></div>
+        <ul class="verdicts">
+          <li><span class="n">1</span><span>Duplicate the timeline</span><span class="v ok">approved</span></li>
+          <li><span class="n">2</span><span>Move the close-up later</span><span class="v mine">taken back, and only that step</span></li>
+          <li><span class="n">3</span><span>Hallway insert</span><span class="v ok">approved, B over A</span></li>
+          <li><span class="n">4</span><span>Extend the room tone</span><span class="v mine">approved, then stretched further by hand</span></li>
+          <li><span class="n">5</span><span>Dialogue sync and preview</span><span class="v ok">approved</span></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>session history</span><span>after my calls</span></p>
+        <div data-render="graph:verdicts"></div>
+        <p class="sub">Timeline</p>
+        <div data-render="timeline:final"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 6 ======================= -->
+<section class="step" id="step-6" aria-labelledby="h-6">
+  <div class="step-head">
+    <div class="step-no">Step 6 of 7 <span class="actors"><span class="actor">Me</span><span class="actor ai">The agent</span></span></div>
+    <h2 id="h-6">So what's changed since v2?</h2>
+    <p class="caption">The history's the graph on the right, and I never have to read a commit log to use it. I look at frames, and I ask in plain words. Underneath, it's ordinary git, since a timeline's already text (Final Cut can export one as FCPXML), and the toggle shows the commands the agent ran for me, which is how my own skills run git for the novel.</p>
+    <p class="principle"><span class="tag">Principle</span><em>A picture for looking, and a conversation for doing.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="../skills/README.md">the skills that run git for me, so I never type it</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <div class="msg me"><span class="who">Me</span><p>What's changed since v2?</p></div>
+        <div class="msg ai"><span class="who">The agent</span><p>It opens on the hallway now, the room tone starts under the first cut and runs past the door, and the close-up still comes before the door shot. The dialogue didn't move against its picture.</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Show me v2 next to this.</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Then try a warmer grade, but don't touch my cut.</p></div>
+        <div class="msg ai"><span class="who">The agent</span><p>Done, on a branch called warmer. Your cut's as you left it, and bringing the grade over or dropping it is 1 tap either way.</p></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>session history</span><span>compare and branch</span></p>
+        <div class="mons">
+          <figure class="mon"><div class="screen" data-render="frame:face"></div><figcaption><span>v2 · first frame</span></figcaption></figure>
+          <figure class="mon picked"><div class="screen" data-render="frame:hall"></div><figcaption><span>v3 · first frame</span><b>now</b></figcaption></figure>
+        </div>
+        <p class="sub">History</p>
+        <div data-render="graph:explore"></div>
+        <p class="sub">What I said, and the git underneath</p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>I said</th><th>The agent ran</th></tr></thead>
+            <tbody>
+              <tr><td>"What's changed since v2?"</td><td><code>git diff v2 v3</code>, summed up in plain words</td></tr>
+              <tr><td>"Show me v2 next to this."</td><td><code>git show v2</code>, rendered as a preview beside the current cut</td></tr>
+              <tr><td>"Then try a warmer grade, but don't touch my cut."</td><td><code>git switch -c warmer</code>, then the grade as a commit on that branch</td></tr>
+              <tr><td>"Put the close-up back where it was." (step 5)</td><td><code>git revert ':/move the close-up later'</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 7 ======================= -->
+<section class="step" id="step-7" aria-labelledby="h-7">
+  <div class="step-head">
+    <div class="step-no">Step 7 of 7 <span class="actors"><span class="actor ai">The agent</span><span class="actor">Me</span></span></div>
+    <h2 id="h-7">Remember this one, forget that one</h2>
+    <p class="caption">The calls get kept with enough context to be useful later, and every preference it learns points back at the decisions that taught it. Approved edits become examples, and reverted ones become boundaries, which is really the same split as my pass and fail lines. So when a preference turns out to be for 1 scene only, I take it back like any other commit, and the edits it came from stay in that cut.</p>
+    <p class="principle"><span class="tag">Principle</span><em>If I've told it once, I shouldn't have to tell it again. If I take it back, it's gone.</em></p>
+    <p class="bridge"><span class="tag">In my writing setup</span><a href="index.html#step-8">rulings that became rules and tests, all in git</a></p>
+  </div>
+  <div class="panes">
+    <div>
+      <p class="pane-label">What we said</p>
+      <div class="chat">
+        <span class="round">The next project</span>
+        <div class="msg ai"><span class="who">The agent</span><p>Plan for the new scene. Last time you stretched the room tone past my suggestion, so it starts long this time.</p></div>
+        <div class="msg me"><span class="who">Me</span><p>Actually, forget the room-tone thing. That was for that scene only.</p></div>
+        <div class="msg ai"><span class="who">The agent</span><p>Retired. It came from 1 decision, your stretch in the hallway scene. That edit stays in that cut, and new plans won't start from it.</p></div>
+      </div>
+    </div>
+    <div>
+      <p class="pane-label">What's on screen</p>
+      <div class="sheet">
+        <p class="file"><span>taste history</span><span>every preference, and where it came from</span></p>
+        <ul class="prefs">
+          <li>
+            <div class="p-head"><span class="p-name">Slow push-ins over static wides on an opening</span><span class="state">active</span></div>
+            <p class="p-from">Learned from "Picked B" in the hallway scene. That's 1 pick so far, so it only reorders the options it shows me.</p>
+          </li>
+          <li class="retired">
+            <div class="p-head"><span class="p-name">Carry room tone well past a cut</span><span class="state off">retired</span></div>
+            <p class="p-from">Learned from "Room tone stretched further" in the hallway scene. Retired on request: "That was for that scene only."</p>
+            <code>git revert ':/carry room tone past a cut'</code>
+          </li>
+        </ul>
+        <p class="sub">What it wrote down</p>
+<pre>{
+  "request": "the reveal's happening too early, hold her face back, open on the empty hallway, let the door sound carry across the cut",
+  "before": "v2",
+  "commits": [
+    {"step": "move the close-up later", "by": "agent", "verdict": "taken back"},
+    {"step": "hallway", "by": "agent", "candidates": ["A", "B"], "picked": "B"},
+    {"step": "extend the room tone", "by": "agent", "verdict": "approved"},
+    {"step": "stretch the room tone", "by": "me"}
+  ],
+  "taught": ["slow push-ins on openings", "carry room tone past a cut (retired)"]
+}</pre>
+        <p class="sub">What I'd keep an eye on</p>
+        <ul class="measures">
+          <li><b>3/5</b><span>steps accepted as they were</span></li>
+          <li><b>1</b><span>adjusted by hand afterward (the room tone), and the size of the adjustment says how far off it still was</span></li>
+          <li><b>1</b><span>taken back (the close-up), which goes in as a boundary</span></li>
+        </ul>
+        <p class="foot">The one I'd watch over time is whether the same correction stops coming back. My writing loop already keeps its rulings this way, as rules and test pairs in git, so taking one back is a revert (<a href="../docs/taste-memory.md">taste-memory.md</a>).</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<section class="outro wrap" aria-labelledby="h-outro">
+  <h2 id="h-outro">Where does this come from?</h2>
+  <p>Every piece of this maps onto something that already works for me in text, and the <a href="index.html">tangerine drive replay</a> shows that version step by step, from the record. The longer write-up is <a href="../docs/beyond-text.md">beyond-text.md</a>, including what I'd train first (the agent's decisions, before any pixels).</p>
+  <p>The history part grew out of a pain point in my own workflow. I run several AI chats at the same time across 2 computers, and even as a software engineer I couldn't be bothered to untangle the git by hand, so I wrote skills that do it for me (<a href="../skills/tree-triage/SKILL.md">tree-triage</a> and <a href="../skills/session-commit/SKILL.md">session-commit</a>, plus the <a href="https://github.com/cthleung/worktree-handoff">worktree-handoff</a> plugin). If I don't want to remember git commands, I'm pretty sure a creator doesn't either. That story's in <a href="../docs/version-control.md">version-control.md</a>.</p>
+</section>
+
+<nav class="controls" aria-label="Step controls">
+  <div class="wrap">
+    <button type="button" class="btn" id="prev">Back</button>
+    <span class="count" id="count" aria-live="polite">1 / 7</span>
+    <span class="hint count">arrow keys work too</span>
+    <button type="button" class="btn primary" id="next">Next</button>
+  </div>
+</nav>
+
+<script>
+(function () {
+  /* ---------- drawn frames (placeholders, 16:9) ---------- */
+  var gid = 0;
+  function grain() {
+    gid += 1;
+    var id = "grain-" + gid;
+    return '<filter id="' + id + '" x="0" y="0" width="100%" height="100%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>' +
+      '<feColorMatrix type="saturate" values="0"/></filter>' +
+      '<rect width="160" height="90" fill="#ffffff" filter="url(#' + id + ')" opacity="0.16"/>';
+  }
+  var ART = {
+    hall: function () {
+      return '<g class="scene" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">' +
+        '<path d="M0 4 L58 30 M0 86 L58 62 M160 4 L102 30 M160 86 L102 62"/>' +
+        '<rect x="58" y="30" width="44" height="32"/>' +
+        '<rect x="73" y="37" width="14" height="25" fill="currentColor" fill-opacity="0.12"/>' +
+        '<path d="M22 13 V77 M40 21 V69 M138 13 V77 M120 21 V69" opacity="0.45"/>' +
+        '<path d="M72 16 H88" opacity="0.7"/></g>' + grain();
+    },
+    face: function () {
+      return '<g class="scene" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">' +
+        '<circle cx="80" cy="40" r="17"/>' +
+        '<path d="M44 90 C48 64 112 64 116 90"/>' +
+        '<path d="M62 37 C62 17 98 17 98 37" opacity="0.55"/></g>';
+    },
+    door: function () {
+      return '<g class="scene" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">' +
+        '<rect x="52" y="10" width="56" height="80"/>' +
+        '<path d="M52 10 L76 17 L76 83 L52 90 Z" fill="currentColor" fill-opacity="0.14"/>' +
+        '<circle cx="71" cy="52" r="1.6" fill="currentColor"/>' +
+        '<path d="M108 90 L140 90 M108 10 L128 90" opacity="0.3"/></g>';
+    },
+    room: function () {
+      return '<g class="scene" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">' +
+        '<rect x="18" y="14" width="42" height="34"/>' +
+        '<path d="M39 14 V48 M18 31 H60" opacity="0.5"/>' +
+        '<path d="M0 64 H160"/>' +
+        '<path d="M92 64 V48 H140 V64 M88 64 V56 H144 V64" opacity="0.8"/>' +
+        '<path d="M72 64 V40 M67 40 H77" opacity="0.6"/></g>';
+    }
+  };
+  ART.audio = function () {
+    return '<g class="scene" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M8 45 H32 L37 32 L42 58 L48 24 L54 66 L60 34 L66 56 L72 40 L78 50 L84 45 H152"/></g>';
+  };
+  ART.warm = function () {
+    return ART.hall() + '<rect width="160" height="90" fill="#E07A1F" opacity="0.24"/>';
+  };
+  function svg(kind) {
+    return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + ART[kind]() + '</svg>';
+  }
+
+  /* ---------- the 3 versions of the cut ---------- */
+  var T = 25;
+  var NAMES = { hall: "Hallway", face: "CU · her face", door: "MS · door opens", room: "WS · the room" };
+  var CUT = {
+    v2: {
+      head: ["timeline v2", "the working cut"],
+      strip: [{ k: "face" }, { k: "door" }, { k: "room" }],
+      tracks: [
+        { name: "V1", a: false, clips: [{ s: 0, e: 6, t: NAMES.face }, { s: 6, e: 13, t: NAMES.door }, { s: 13, e: 20, t: NAMES.room }] },
+        { name: "A1", a: true, clips: [{ s: 14, e: 19, t: "Dialogue" }] },
+        { name: "A2", a: true, clips: [{ s: 6, e: 13, t: "Room tone" }] },
+        { name: "A3", a: true, clips: [{ s: 11, e: 13, t: "Door" }] }
+      ],
+      cuts: [6, 13],
+      label: "Timeline v2: the close-up of her face opens the cut, then the door shot, then the room."
+    },
+    proposed: {
+      head: ["timeline v3", "the agent's plan, numbered"],
+      strip: [{ k: "hall", t: "Hallway A or B", c: "new", b: "3" }, { k: "door" }, { k: "face", c: "new", b: "2" }, { k: "room" }],
+      tracks: [
+        { name: "V1", a: false, clips: [{ s: 0, e: 5, t: "Hallway A or B", c: "new", b: "3" }, { s: 5, e: 12, t: NAMES.door }, { s: 12, e: 18, t: NAMES.face, c: "new", b: "2" }, { s: 18, e: 25, t: NAMES.room }] },
+        { name: "A1", a: true, clips: [{ s: 19, e: 24, t: "Dialogue", c: "new", b: "5" }] },
+        { name: "A2", a: true, clips: [{ s: 3, e: 14, t: "Room tone", c: "new", b: "4" }] },
+        { name: "A3", a: true, clips: [{ s: 10, e: 14, t: "Door" }] }
+      ],
+      cuts: [5, 12, 18],
+      label: "Proposed timeline v3: a hallway shot opens the cut, the close-up moves after the door shot, and the room tone is extended under the transition."
+    },
+    final: {
+      head: ["timeline v3", "after my calls"],
+      strip: [{ k: "hall", t: "Hallway B" }, { k: "face", c: "mine", b: "2" }, { k: "door" }, { k: "room" }],
+      tracks: [
+        { name: "V1", a: false, clips: [{ s: 0, e: 5, t: "Hallway B" }, { s: 5, e: 11, t: NAMES.face, c: "mine", b: "2" }, { s: 11, e: 18, t: NAMES.door }, { s: 18, e: 25, t: NAMES.room }] },
+        { name: "A1", a: true, clips: [{ s: 19, e: 24, t: "Dialogue" }] },
+        { name: "A2", a: true, clips: [{ s: 0, e: 21, t: "Room tone, stretched by hand", c: "mine", b: "4" }] },
+        { name: "A3", a: true, clips: [{ s: 16, e: 20, t: "Door" }] }
+      ],
+      cuts: [5, 11, 18],
+      label: "Timeline v3 after my calls: hallway B opens, the close-up is back before the door shot, and the room tone runs longer than the agent suggested."
+    }
+  };
+
+  function pct(x) { return (x / T * 100).toFixed(3) + "%"; }
+  function badge(b, c) { return b ? '<span class="badge' + (c === "mine" ? " mine" : "") + '">' + b + "</span>" : ""; }
+  function strip(key) {
+    return '<ol class="strip">' + CUT[key].strip.map(function (sh) {
+      var label = sh.t || NAMES[sh.k];
+      return '<li class="' + (sh.c || "") + '"><div class="thumb">' + svg(sh.k) + "</div><span>" + label + "</span>" + badge(sh.b, sh.c) + "</li>";
+    }).join("") + "</ol>";
+  }
+  function timeline(key) {
+    var cut = CUT[key];
+    var ticks = [0, 5, 10, 15, 20, 25].map(function (s) { return '<span style="left:' + pct(s) + '">' + s + "s</span>"; }).join("");
+    var rows = cut.tracks.map(function (tr) {
+      var clips = tr.clips.map(function (c) {
+        return '<div class="clip' + (tr.a ? " a" : "") + (c.c ? " " + c.c : "") + '" style="left:' + pct(c.s) + ";width:" + pct(c.e - c.s) + '"><span>' + c.t + "</span>" + badge(c.b, c.c) + "</div>";
+      }).join("");
+      var cutlines = tr.a ? cut.cuts.map(function (s) { return '<i class="cutline" style="left:' + pct(s) + '"></i>'; }).join("") : "";
+      return '<div class="tl-row"><span class="tl-name">' + tr.name + '</span><div class="tl-lane">' + cutlines + clips + "</div></div>";
+    }).join("");
+    var key2 = '<div class="tl-key"><span><i class="k-box"></i>as it was</span><span><i class="k-box new"></i>the agent\'s change</span><span><i class="k-box mine"></i>my change</span><span>dashed lines: picture cuts</span></div>';
+    return '<div class="tl-scroll"><div class="tl" role="img" aria-label="' + cut.label + '">' +
+      '<div class="tl-ruler">' + ticks + "</div>" + rows + "</div></div>" + key2;
+  }
+
+  /* ---------- the session history graph ---------- */
+  var ROWS = [
+    { lane: 0, kind: "base", thumb: "face", msg: "v2, the working cut", meta: "as it was, and still there", git: "main" },
+    { lane: 1, kind: "agent", p: [0], msg: "A copy of v2 to work on", meta: "the agent · plan step 1", git: "git switch -c v3 main" },
+    { lane: 1, kind: "agent", p: [1], thumb: "face", status: "reverted", chip: "taken back", msg: "Close-up moved after the door shot", meta: "the agent · plan step 2", git: "git commit -m \"move the close-up later\"" },
+    { lane: 2, kind: "agent", p: [2], thumb: "hall", status: "dropped", chip: "not picked", msg: "Hallway A, holds still", meta: "the agent · plan step 3, option A", git: "git switch -c hallway-a" },
+    { lane: 3, kind: "agent", p: [2], thumb: "hall", msg: "Hallway B, slow push in", meta: "the agent · plan step 3, option B", git: "git switch -c hallway-b" },
+    { lane: 1, kind: "merge", p: [2, 4], thumb: "hall", chip: "my pick", chipMe: true, msg: "Picked B", meta: "me", git: "git merge hallway-b" },
+    { lane: 1, kind: "agent", p: [5], thumb: "audio", msg: "Room tone extended under the transition", meta: "the agent · plan step 4", git: "git commit -m \"extend the room tone\"" },
+    { lane: 1, kind: "agent", p: [6], thumb: "audio", msg: "Dialogue kept in sync, preview rendered", meta: "the agent · plan step 5", git: "git commit -m \"keep dialogue in sync\"" },
+    { lane: 1, kind: "me", p: [7], thumb: "face", chip: "revert", chipMe: true, msg: "Close-up back where it was", meta: "me · undoes step 2 and nothing else", git: "git revert ':/move the close-up later'" },
+    { lane: 1, kind: "me", p: [8], thumb: "audio", msg: "Room tone stretched further", meta: "me · by hand", git: "git commit -m \"stretch the room tone\"" }
+  ];
+  var GRAPHS = {
+    verdicts: { rows: ROWS, cmp: [] },
+    explore: {
+      rows: ROWS.concat([
+        { lane: 2, kind: "agent", p: [9], thumb: "warm", msg: "Warmer grade, on its own branch", meta: "the agent · your cut untouched", git: "git switch -c warmer" }
+      ]),
+      cmp: [0, 9]
+    }
+  };
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+  function graph(key) {
+    var g = GRAPHS[key];
+    var items = g.rows.map(function (r, i) {
+      var cls = "g-row" + (r.status ? " s-" + r.status : "");
+      var thumb = r.thumb ? '<div class="g-thumb">' + svg(r.thumb) + "</div>" : '<div class="g-thumb none" aria-hidden="true"></div>';
+      var chips = (r.chip ? '<span class="g-chip' + (r.chipMe ? " me" : "") + '">' + r.chip + "</span>" : "") +
+        (g.cmp.indexOf(i) >= 0 ? '<span class="g-chip me">compared</span>' : "");
+      return '<li class="' + cls + '">' + thumb + '<div class="g-text"><p class="g-msg">' + r.msg + chips + "</p>" +
+        '<p class="g-meta">' + r.meta + '</p><code class="g-git">' + esc(r.git) + "</code></div></li>";
+    }).join("");
+    var legend = '<div class="g-legend"><span><i class="base"></i>as it was</span><span><i></i>the agent</span>' +
+      '<span><i class="me"></i>me</span><span>dashed: not picked, or left untouched</span></div>';
+    return '<div class="graph" data-graph="' + key + '"><div class="g-bar"><span>Oldest first</span>' +
+      '<button type="button" class="g-toggle" aria-pressed="false">Show the git underneath</button></div>' +
+      '<div class="g-body"><svg class="g-lines" aria-hidden="true"></svg><ol class="g-list">' + items + "</ol></div>" + legend + "</div>";
+  }
+  function drawGraph(el) {
+    var list = el.querySelector(".g-list");
+    if (!list || list.offsetParent === null) return;
+    var rows = GRAPHS[el.getAttribute("data-graph")].rows;
+    var lis = list.children;
+    var ys = [];
+    for (var i = 0; i < lis.length; i++) ys.push(lis[i].offsetTop + 17);
+    var h = list.offsetHeight;
+    function X(l) { return 9 + l * 18; }
+    var out = ['<path class="g-edge main" d="M' + X(0) + " " + ys[0] + " V" + (h - 2) + '"/>'];
+    rows.forEach(function (r, i) {
+      (r.p || []).forEach(function (pi) {
+        var a = rows[pi], x1 = X(a.lane), y1 = ys[pi], x2 = X(r.lane), y2 = ys[i], d;
+        if (a.lane === r.lane) d = "M" + x1 + " " + y1 + " V" + y2;
+        else if (r.lane > a.lane) d = "M" + x1 + " " + y1 + " C" + x1 + " " + (y1 + 14) + " " + x2 + " " + (y1 + 8) + " " + x2 + " " + (y1 + 22) + " V" + y2;
+        else d = "M" + x1 + " " + y1 + " V" + (y2 - 22) + " C" + x1 + " " + (y2 - 8) + " " + x2 + " " + (y2 - 14) + " " + x2 + " " + y2;
+        out.push('<path class="g-edge' + (r.status === "dropped" ? " dropped" : "") + '" d="' + d + '"/>');
+      });
+    });
+    rows.forEach(function (r, i) {
+      var k = r.status === "dropped" ? "dropped" : r.status === "reverted" ? "reverted" : r.kind;
+      if (r.kind === "merge") out.push('<circle class="g-ring" cx="' + X(r.lane) + '" cy="' + ys[i] + '" r="8.5"/>');
+      out.push('<circle class="g-node ' + k + '" cx="' + X(r.lane) + '" cy="' + ys[i] + '" r="5"/>');
+    });
+    var s = el.querySelector(".g-lines");
+    s.setAttribute("width", "76");
+    s.setAttribute("height", String(h));
+    s.innerHTML = out.join("");
+  }
+  function drawAll() {
+    Array.prototype.forEach.call(document.querySelectorAll(".graph"), drawGraph);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-render]"), function (el) {
+    var p = el.getAttribute("data-render").split(":");
+    if (p[0] === "strip") el.innerHTML = strip(p[1]);
+    if (p[0] === "timeline") el.innerHTML = timeline(p[1]);
+    if (p[0] === "frame") el.innerHTML = svg(p[1]);
+    if (p[0] === "graph") el.innerHTML = graph(p[1]);
+  });
+
+  /* ---------- stepper ---------- */
+  var root = document.documentElement;
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  var prev = document.getElementById("prev");
+  var next = document.getElementById("next");
+  var count = document.getElementById("count");
+  var btnSteps = document.getElementById("mode-steps");
+  var btnAll = document.getElementById("mode-all");
+  var mode = "steps";
+  try { mode = localStorage.getItem("suite-mode") === "all" ? "all" : "steps"; } catch (e) {}
+  root.classList.add("js");
+
+  function current() {
+    var m = /^#step-(\d+)$/.exec(location.hash);
+    var n = m ? parseInt(m[1], 10) : 1;
+    return Math.min(Math.max(n, 1), steps.length);
+  }
+  function render() {
+    var n = current();
+    root.setAttribute("data-mode", mode);
+    steps.forEach(function (s, i) { s.hidden = mode === "steps" && i !== n - 1; });
+    links.forEach(function (a, i) {
+      if (mode === "steps" && i === n - 1) a.setAttribute("aria-current", "step");
+      else a.removeAttribute("aria-current");
+    });
+    count.textContent = n + " / " + steps.length;
+    prev.disabled = n === 1;
+    next.disabled = n === steps.length;
+    btnSteps.setAttribute("aria-pressed", String(mode === "steps"));
+    btnAll.setAttribute("aria-pressed", String(mode === "all"));
+    drawAll();
+  }
+  function go(n) { location.hash = "step-" + Math.min(Math.max(n, 1), steps.length); }
+  function setMode(m) {
+    mode = m;
+    try { localStorage.setItem("suite-mode", m); } catch (e) {}
+    render();
+  }
+  prev.addEventListener("click", function () { go(current() - 1); });
+  next.addEventListener("click", function () { go(current() + 1); });
+  btnSteps.addEventListener("click", function () { setMode("steps"); });
+  btnAll.addEventListener("click", function () { setMode("all"); });
+  window.addEventListener("hashchange", render);
+  var resizeTimer = null;
+  window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawAll, 120); });
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(drawAll); }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest(".g-toggle") : null;
+    if (!t) return;
+    var g = t.closest(".graph");
+    var on = !g.classList.contains("git");
+    g.classList.toggle("git", on);
+    t.setAttribute("aria-pressed", String(on));
+    drawGraph(g);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (mode !== "steps" || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === "ArrowRight") { go(current() + 1); }
+    if (e.key === "ArrowLeft") { go(current() - 1); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
