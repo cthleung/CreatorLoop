@@ -16,11 +16,11 @@ python3 tools/tree_triage.py
 
 It prints a plan in a few seconds. Add `--diffs` for +/- line counts per file, or `--json` to process it. The groups:
 
-- **Quotes only.** Files that match HEAD once smart quotes are straightened, so a quote cleanup is the only change. Safe to commit together, and they always go in a commit of their own, apart from any content work.
-- **One block per session.** Files that only that session edited since the file's last commit. The block carries the session's name, topic and last prompt, which is enough to write a commit subject from.
-- **Edited by more than one session.** Never put these in a session's commit without asking.
-- **No session edited these.** Hand edits in the editor, a script run from a terminal, a session from another folder, or a transcript that's gone.
-- **SpecStory logs.** If chat history syncs into `.specstory/`, its own hook commits these. Leave them alone.
+- **Quotes only:** Files that match HEAD once smart quotes are straightened, so a quote cleanup is the only change. Safe to commit together, and they always go in a commit of their own, apart from any content work.
+- **One block per session:** Files that only that session edited since the file's last commit. The block carries the session's name, topic and last prompt, which is enough to write a commit subject from.
+- **Edited by more than one session:** Never put these in a session's commit without asking.
+- **No session edited these:** Hand edits in the editor, a script run from a terminal, a session from another folder, or a transcript that's gone.
+- **SpecStory logs:** If chat history syncs into `.specstory/`, its own hook commits these. Leave them alone.
 
 Flags on a file:
 - `GATE`: a hard rule from `rules/` (an em dash, a banned word) in the lines the file added.

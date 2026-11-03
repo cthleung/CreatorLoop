@@ -10,11 +10,11 @@ Most AI prose has a recognizable feel to it, and a lot of my tooling exists to c
 
 I'd tried a couple of hosted inference services first, then ended up serving it myself on Modal with vLLM, which is the version I learned the most from.
 
-- **The model.** An 8-bit weight (W8A16 GPTQ) quantization of the 31B fine-tune, first on an A100-80GB and then on an H100.
-- **Context.** Configured for 256K tokens, since a novel's worth of plans, style guides and chapters adds up fast.
-- **Serving.** Prefix caching and chunked prefill turned on, plus tool calling, so it could work as an agent and not only a chat box.
-- **Memory tuning.** The model has 50 sliding-window layers, and each one reserves KV cache slots for the tokens in flight. At 32,768 batched tokens that needed about 71 GiB at 256K context, so I capped it at 8,192, which brought it down to about 33 GiB and left room for everything else.
-- **Cost control.** 1 container only, scaling down after 3 minutes idle, since a second container would've meant paying for a full cold start while requests stalled on it.
+- **The model:** An 8-bit weight (W8A16 GPTQ) quantization of the 31B fine-tune, first on an A100-80GB and then on an H100.
+- **Context:** Configured for 256K tokens, since a novel's worth of plans, style guides and chapters adds up fast.
+- **Serving:** Prefix caching and chunked prefill turned on, plus tool calling, so it could work as an agent and not only a chat box.
+- **Memory tuning:** The model has 50 sliding-window layers, and each one reserves KV cache slots for the tokens in flight. At 32,768 batched tokens that needed about 71 GiB at 256K context, so I capped it at 8,192, which brought it down to about 33 GiB and left room for everything else.
+- **Cost control:** 1 container only, scaling down after 3 minutes idle, since a second container would've meant paying for a full cold start while requests stalled on it.
 
 Then I pointed my editor at it, so I could switch between it and Claude without changing how I'd been working.
 

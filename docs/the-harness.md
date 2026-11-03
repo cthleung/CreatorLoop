@@ -28,11 +28,11 @@ The 5 readers (voice, gloss, blocking, fact check and strength) are subagents. E
 
 ## The rest of the toolbox
 
-- **Scripts.** 18 Python scripts, standard library only, for scanning, merging labels, splitting scenes, finding repeated phrases, checking cadence against each narrator's baseline, spell checking, picking numbers and so on.
-- **Tests.** A test suite that runs every scanner gold case plus the other scripts (28 tests right now), and a rule that it runs after any change to a script or a rule.
-- **MCP servers.** Filesystem and git servers, mostly so the agents can read and search the repo like I would myself. Nothing exotic, but they're handy.
-- **Memory.** The memory notes live in the repo and get linked into Claude Code's memory folder, so my taste travels with git instead of living on one machine.
-- **An output style.** Even how the AI talks to me in chat is configured, believe it or not. It talks like I write in my own DMs, measured against samples of my writing, because a stiff, corporate chat partner wears me out over a long session.
+- **Scripts:** 18 Python scripts, standard library only, for scanning, merging labels, splitting scenes, finding repeated phrases, checking cadence against each narrator's baseline, spell checking, picking numbers and so on.
+- **Tests:** A test suite that runs every scanner gold case plus the other scripts (28 tests right now), and a rule that it runs after any change to a script or a rule.
+- **MCP servers:** Filesystem and git servers, mostly so the agents can read and search the repo like I would myself. Nothing exotic, but they're handy.
+- **Memory:** The memory notes live in the repo and get linked into Claude Code's memory folder, so my taste travels with git instead of living on one machine.
+- **An output style:** Even how the AI talks to me in chat is configured, believe it or not. It talks like I write in my own DMs, measured against samples of my writing, because a stiff, corporate chat partner wears me out over a long session.
 
 ## Working across 2 computers
 

@@ -71,8 +71,8 @@ Taste's got modes, too. How I'd treat a portrait probably isn't how I'd treat do
 ## Checks before I ever look
 
 A lot of what my scanner does has a direct equivalent in an edit suite, and it's the boring, objective stuff a machine should catch before a person spends any attention on it.
-- **Photo.** Clipped channels, damaged skin texture, mask edges leaking past the subject, white balance drifting between shots in a set, export settings.
-- **Video.** Broken audio sync, loudness, duplicate or dropped frames, continuity slips, delivery settings.
+- **Photo:** Clipped channels, damaged skin texture, mask edges leaking past the subject, white balance drifting between shots in a set, export settings.
+- **Video:** Broken audio sync, loudness, duplicate or dropped frames, continuity slips, delivery settings.
 
 Taste stays with me, of course. What the checks buy is that when I sit down to judge something, I'm judging the creative call and not hunting for a clipped highlight.
 

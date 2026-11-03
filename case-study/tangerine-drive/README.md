@@ -50,14 +50,14 @@ The rest happened over the next day or so ([06-revisions.md](06-revisions.md)), 
 
 - **The redraft quietly dropped the image the scene was built around** - both their faces in the car window, with her little fog drawing between them. I noticed it'd gone missing, asked where it went, and it came back as its own beat.
 - **The AI added a music box to the dialogue,** and I asked straight out, "Where did the music box thing come from? Was it made up?" It wasn't, as it turns out (it's in the footage, along with the bill, down to the won), but I always check.
-- **When the fixes started piling up, I pulled the other way.** "Smirk is fine. We can have some stock-face here and there, for variety and to avoid overwriting/overblocking everything." A style rule's there to catch reflexes, and I never wanted it boxing in every line.
-- **My own designs beat the rules.** The ending breaks into short fragments, which my rules would normally flag, but linking the 2 scenes with that staccato was my idea in the first place, so it's staying.
+- **When the fixes started piling up, I pulled the other way:** "Smirk is fine. We can have some stock-face here and there, for variety and to avoid overwriting/overblocking everything." A style rule's there to catch reflexes, and I never wanted it boxing in every line.
+- **My own designs beat the rules:** The ending breaks into short fragments, which my rules would normally flag, but linking the 2 scenes with that staccato was my idea in the first place, so it's staying.
 
 ## Side by side
 
 On that note, here are a few spots where draft 1 and the final version differ, so you can see what the review actually bought.
 
-**The opening.** Draft 1 opens on a tagged line, with the narrator setting the scene.
+**The opening:** Draft 1 opens on a tagged line, with the narrator setting the scene.
 
 > "Seoddaeng-ah, how many times are you gonna play this?" Haeun asked, laughing, with her seat pulled so far forward that her chin was practically resting on the steering wheel. "It's been this one song the whole way up the mountain."
 
@@ -69,7 +69,7 @@ The final opens on the black frame I asked for.
 >
 > "Hey, you've been saying that since the bottom of the mountain -"
 
-**Her voice.** Draft 1, when she draws on the fogged-up window:
+**Her voice:** Draft 1, when she draws on the fogged-up window:
 
 > While the song came back around to the start, Seoyun drew on her side of the glass with one finger, a little house with a pointy roof and lumpy tangerine trees all around it. When they stopped at a junction to let nobody past, Haeun glanced over at it, then back at the road.
 
@@ -82,9 +82,9 @@ The final, where she'd rather make a joke than admit anything:
 > "It's a potato farm."
 
 
-**A non-event.** Draft 1 tells you what she didn't do ("Seoyun's feet stayed where they were"). The final shows what she did: "Seoyun opened one eye and crossed her ankles on the dash."
+**A non-event:** Draft 1 tells you what she didn't do ("Seoyun's feet stayed where they were"). The final shows what she did: "Seoyun opened one eye and crossed her ankles on the dash."
 
-**The ending.** Draft 1 has her answer the house question with "*Mm*," twice, and the final uses her real reply from the footage.
+**The ending:** Draft 1 has her answer the house question with "*Mm*," twice, and the final uses her real reply from the footage.
 
 > "Is that a yes?"
 >

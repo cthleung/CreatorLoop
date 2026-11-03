@@ -28,8 +28,8 @@ The catch is "if you use it right." Nobody commits at the size of a single decis
 
 A creator's got the same gap between intent and execution that I had with git, except it's everywhere in the app. They know the reveal needs to come later, and the gap is all the panels and menus between that and the result. My answer for the novel was an agent that does the operating, and I'd want the same thing for the history, with 2 ways into it.
 
-- **A picture for looking.** The session as a graph of decisions, each with a frame you can actually see, and the options as branches. Nobody reads a commit log to decide whether a grade's right.
-- **A conversation for doing.** The creator says what they want, and the agent runs the git underneath.
+- **A picture for looking:** The session as a graph of decisions, each with a frame you can actually see, and the options as branches. Nobody reads a commit log to decide whether a grade's right.
+- **A conversation for doing:** The creator says what they want, and the agent runs the git underneath.
 
 | The creator says | What the agent does |
 |---|---|

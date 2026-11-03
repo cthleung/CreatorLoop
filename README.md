@@ -15,13 +15,13 @@ The [replay](https://cthleung.github.io/CreatorLoop/demo/) of 1 real scene (left
 
 If you're looking at this for an ML role on creative tools, here's the short version, and [for-reviewers.md](docs/for-reviewers.md) has the long one with links for every point:
 
-- **Shipping tested code.** 3 years full time as a software engineer building AI tooling at a large bank, including deploying a PII-detection NER model on H100s and tuning it for 21 to 31 times lower latency at typical load. Plus the [tools](tools/) here, with 48 tests running on 3 operating systems, and [worktree-handoff](https://github.com/cthleung/worktree-handoff), built in public 1 small pull request at a time with a [build log](https://github.com/cthleung/worktree-handoff/blob/main/docs/building-log.md).
-- **Agents with a person in charge.** A named inventor on a [granted patent](https://patents.google.com/patent/US12639279B2/en) for an LLM agent from my day job, and both repos were [built with coding agents](docs/for-reviewers.md#how-i-built-these-repos), openly.
-- **LLMs on a real project.** Agents, evals, a self-hosted fine-tune, an on-device run with MLX and a plan for personal adapters, all built around a novel I'm actually writing.
-- **Experimental design.** A [blind, repeated-run comparison](evals/results/2026-11-03-calibrated-vs-generic.md) of 2 reviewer briefs, with bootstrap intervals and McNemar - and an honest read of why the gold set's still too small to call it.
-- **Product sense.** I [ditched a model that wrote better prose](docs/model-experiments.md), because a 2-minute cold start is the wrong experience for someone mid-scene.
-- **Version control a creator can talk to.** I got tired of typing git for my novel, so I [built skills that do it for me](skills/README.md), and [version-control.md](docs/version-control.md) is how that'd work in a photo or video app.
-- **Creative tools from the inside.** I'm a photographer and filmmaker, and [beyond-text.md](docs/beyond-text.md) is what I'd want from an agent in my own edit suite.
+- **Shipping tested code:** 3 years full time as a software engineer building AI tooling at a large bank, including deploying a PII-detection NER model on H100s and tuning it for 21 to 31 times lower latency at typical load. Plus the [tools](tools/) here, with 48 tests running on 3 operating systems, and [worktree-handoff](https://github.com/cthleung/worktree-handoff), built in public 1 small pull request at a time with a [build log](https://github.com/cthleung/worktree-handoff/blob/main/docs/building-log.md).
+- **Agents with a person in charge:** A named inventor on a [granted patent](https://patents.google.com/patent/US12639279B2/en) for an LLM agent from my day job, and both repos were [built with coding agents](docs/for-reviewers.md#how-i-built-these-repos), openly.
+- **LLMs on a real project:** Agents, evals, a self-hosted fine-tune, an on-device run with MLX and a plan for personal adapters, all built around a novel I'm actually writing.
+- **Experimental design:** A [blind, repeated-run comparison](evals/results/2026-11-03-calibrated-vs-generic.md) of 2 reviewer briefs, with bootstrap intervals and McNemar - and an honest read of why the gold set's still too small to call it.
+- **Product sense:** I [ditched a model that wrote better prose](docs/model-experiments.md), because a 2-minute cold start is the wrong experience for someone mid-scene.
+- **Version control a creator can talk to:** I got tired of typing git for my novel, so I [built skills that do it for me](skills/README.md), and [version-control.md](docs/version-control.md) is how that'd work in a photo or video app.
+- **Creative tools from the inside:** I'm a photographer and filmmaker, and [beyond-text.md](docs/beyond-text.md) is what I'd want from an agent in my own edit suite.
 
 ## The loop
 
@@ -41,9 +41,9 @@ The short version goes like this. I decide what a scene is about and how it shou
 
 ## Start here
 
-1. **[Why I built it](docs/why-i-built-it.md).** The story behind all this, from a kid in the 2000s imagining computers that make "fuzzy" decisions, to a novel that grew its own test suite.
-2. **[The tangerine drive](case-study/tangerine-drive/README.md).** A single scene from the novel, start to finish, with every stage on record. My messages are in there too, so you can see what I actually said at each step and what the AI did with it. If you only read one thing, read this.
-3. **[The replay](https://cthleung.github.io/CreatorLoop/demo/).** The same scene as a step-through, with my messages on one side and the page on the other, built only from the record. Next to it there's a [concept page](https://cthleung.github.io/CreatorLoop/demo/edit-suite.html) for how the loop would carry over into a video editor.
+1. **[Why I built it](docs/why-i-built-it.md):** The story behind all this, from a kid in the 2000s imagining computers that make "fuzzy" decisions, to a novel that grew its own test suite.
+2. **[The tangerine drive](case-study/tangerine-drive/README.md):** A single scene from the novel, start to finish, with every stage on record. My messages are in there too, so you can see what I actually said at each step and what the AI did with it. If you only read one thing, read this.
+3. **[The replay](https://cthleung.github.io/CreatorLoop/demo/):** The same scene as a step-through, with my messages on one side and the page on the other, built only from the record. Next to it there's a [concept page](https://cthleung.github.io/CreatorLoop/demo/edit-suite.html) for how the loop would carry over into a video editor.
 
 ## What's in here
 

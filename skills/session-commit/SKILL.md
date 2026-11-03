@@ -16,9 +16,9 @@ python3 tools/tree_triage.py --session --diffs
 
 With no value, `--session` reads this chat's id from `CLAUDE_CODE_SESSION_ID`. For another session, pass its id prefix or part of its name (`--session 58ae9ee8`, `--session "harness doc"`). The output has up to 3 groups:
 
-- **Only this session edited these.** The commit candidates.
-- **Other sessions edited these too.** Never commit these without asking (step 3).
-- **Quotes only.** A quote cleanup is the only change. These go in a commit of their own.
+- **Only this session edited these:** The commit candidates.
+- **Other sessions edited these too:** Never commit these without asking (step 3).
+- **Quotes only:** A quote cleanup is the only change. These go in a commit of their own.
 
 Flags on a file (`GATE`, `open marker(s)`, `untracked`, `deleted`) mean the same as in tree-triage's step 1.
 

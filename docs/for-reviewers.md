@@ -9,11 +9,11 @@ Both repos were built with coding agents, mostly Claude Code, and I'd rather jus
 ## Shipping reliable, tested code
 
 I've worked full time as a software engineer for 3 years, most recently building AI tooling at a large bank. That work isn't public, so here's the short version first.
-- **Deploying an ML model to production GPUs.** I deployed a PII-detection NER model to our internal inference platform (NVIDIA Triton, on H100s) and wrote nearly all of that repo, CI/CD included: deploys across pre-production environments, signed release bundles, container image scanning, and a config-only deploy so a tuning run didn't need a full rebuild.
-- **Tuning it like an experiment.** Each phase changed 1 variable (batch size, queue delay, pod count, GPU split, CPU allocation) against a recorded baseline, and every table in the write-up ended with a verdict. 2 pods splitting 1 GPU beat 1 pod with a full GPU, for the same GPU budget, with 21 to 31 times lower latency and 55 to 58% more throughput at typical load. At extreme load, though, throughput dropped by about a quarter, and I wrote that down just as plainly as the win, since anyone picking that config should know.
-- **An agent with a person in charge.** I'm a named inventor on [US 12,639,279](https://patents.google.com/patent/US12639279B2/en), granted in 2026, for an LLM agent that fills in missing documentation for business datasets. It works in small steps you can check on their own, and a data steward approves what it writes, which is really the same loop as everything in this repo - just a few years earlier.
-- **Rolling it out safely.** A feature toggle across the shared protocol library, the gateway and the worker, with the worker falling back to the existing path if the new inference service was down.
-- **Ownership.** I wrote the first version of a backend memory service and became its largest contributor, and I'm the largest individual contributor on the tool server our AI assistant talks to. I ship in small PRs, several a day when the work allows, because a change that's reviewable in one sitting is a change I'd want to inherit.
+- **Deploying an ML model to production GPUs:** I deployed a PII-detection NER model to our internal inference platform (NVIDIA Triton, on H100s) and wrote nearly all of that repo, CI/CD included: deploys across pre-production environments, signed release bundles, container image scanning, and a config-only deploy so a tuning run didn't need a full rebuild.
+- **Tuning it like an experiment:** Each phase changed 1 variable (batch size, queue delay, pod count, GPU split, CPU allocation) against a recorded baseline, and every table in the write-up ended with a verdict. 2 pods splitting 1 GPU beat 1 pod with a full GPU, for the same GPU budget, with 21 to 31 times lower latency and 55 to 58% more throughput at typical load. At extreme load, though, throughput dropped by about a quarter, and I wrote that down just as plainly as the win, since anyone picking that config should know.
+- **An agent with a person in charge:** I'm a named inventor on [US 12,639,279](https://patents.google.com/patent/US12639279B2/en), granted in 2026, for an LLM agent that fills in missing documentation for business datasets. It works in small steps you can check on their own, and a data steward approves what it writes, which is really the same loop as everything in this repo - just a few years earlier.
+- **Rolling it out safely:** A feature toggle across the shared protocol library, the gateway and the worker, with the worker falling back to the existing path if the new inference service was down.
+- **Ownership:** I wrote the first version of a backend memory service and became its largest contributor, and I'm the largest individual contributor on the tool server our AI assistant talks to. I ship in small PRs, several a day when the work allows, because a change that's reviewable in one sitting is a change I'd want to inherit.
 
 And here's what's public.
 - [`tools/`](../tools/) with [48 tests](../tests/) that run on Linux, macOS and Windows on every push. The scanner refuses to save if its labels don't strip back to the original text byte for byte.
@@ -22,10 +22,10 @@ And here's what's public.
 ## Applying LLMs to a real project
 
 That's honestly the entire repo, but the clearest pieces are probably these.
-- **Agents and prompting.** 5 reader agents with strict output formats, run cold so they can't see each other's reasoning ([the prompts](../agents/), and how they fit in [how-it-works.md](how-it-works.md)).
-- **Evaluation.** Gold sets built from my own rulings, a blind test with held-out lines, and repeated runs ([evaluation.md](evaluation.md)).
-- **Deployment and model choice.** I served a fine-tuned 31B model myself and measured it against Claude on time to first token, context and cost ([model-experiments.md](model-experiments.md)), and ran a 12B model on my own laptop with MLX against the same blind test ([results](../evals/results/2026-11-03-local-mlx.md)).
-- **Personalization.** How my picks and overrides become rules and tests, and the preference data a LoRA adapter could train on later ([taste-memory.md](taste-memory.md)).
+- **Agents and prompting:** 5 reader agents with strict output formats, run cold so they can't see each other's reasoning ([the prompts](../agents/), and how they fit in [how-it-works.md](how-it-works.md)).
+- **Evaluation:** Gold sets built from my own rulings, a blind test with held-out lines, and repeated runs ([evaluation.md](evaluation.md)).
+- **Deployment and model choice:** I served a fine-tuned 31B model myself and measured it against Claude on time to first token, context and cost ([model-experiments.md](model-experiments.md)), and ran a 12B model on my own laptop with MLX against the same blind test ([results](../evals/results/2026-11-03-local-mlx.md)).
+- **Personalization:** How my picks and overrides become rules and tests, and the preference data a LoRA adapter could train on later ([taste-memory.md](taste-memory.md)).
 
 ## Experimental design, and telling a real effect from noise
 
@@ -37,14 +37,14 @@ That being said, the same habit shows up elsewhere too. At work, I tuned the GPU
 
 - **[The tangerine drive](../case-study/tangerine-drive/README.md)** shows where I overrode the AI and why. That includes the times I pulled the other way, like letting a stock smirk stay so the scene didn't get over-written, because a fix that touches every line does real damage too.
 - **[Model experiments](model-experiments.md)** is the "can the model do it, versus is it the right experience" question in real life. The fine-tune actually wrote better sentences and was still the wrong choice, because a 2-minute cold start kills a writing session.
-- **[Keep what works](how-it-works.md).** A reader agent exists only to protect what a draft already does well.
+- **[Keep what works](how-it-works.md):** A reader agent exists only to protect what a draft already does well.
 - **[Version control you can see and talk to](version-control.md)** started as my own pain point (several AI chats in 1 folder, 2 computers, and no patience for git), and it ends with what I'd want in an editing app.
 
 ## Agentic systems, tool use and evaluation harnesses
 
-- **[The harness](the-harness.md).** Hooks on every message and every edit, skills, cold subagents, MCP servers, and 1 config shared by 2 AI editors.
-- **[How it works](how-it-works.md).** The loop step by step, with the tool behind each step.
-- **[Skills](../skills/README.md).** 2 skills that run git for me from plain requests, with [`tools/tree_triage.py`](../tools/tree_triage.py) underneath, which reads every chat transcript to work out which chat changed which file.
+- **[The harness](the-harness.md):** Hooks on every message and every edit, skills, cold subagents, MCP servers, and 1 config shared by 2 AI editors.
+- **[How it works](how-it-works.md):** The loop step by step, with the tool behind each step.
+- **[Skills](../skills/README.md):** 2 skills that run git for me from plain requests, with [`tools/tree_triage.py`](../tools/tree_triage.py) underneath, which reads every chat transcript to work out which chat changed which file.
 - At work, the tool-serving layer an AI assistant calls into (not public).
 
 ## Using creative tools from the inside
@@ -58,6 +58,6 @@ I came to the novel from film and a lot of reading and writing, and to SWE/ML fr
 ## What I'm still building toward
 
 - **A bigger gold set,** so the experiments have enough must-fail lines to show a real difference.
-- **On-device work.** [A first MLX run](../evals/results/2026-11-03-local-mlx.md) put Gemma 4 12B on my MacBook Air as the voice reader, with the same blind test and stats as the Claude runs. It matched Claude on 38 of 42 lines, but the first token took a median 151 seconds, so the next step is the prompt cache and a bigger gold set.
-- **Swift and Apple-platform code.** I've studied Swift, but nothing in this repo is native app code.
+- **On-device work:** [A first MLX run](../evals/results/2026-11-03-local-mlx.md) put Gemma 4 12B on my MacBook Air as the voice reader, with the same blind test and stats as the Claude runs. It matched Claude on 38 of 42 lines, but the first token took a median 151 seconds, so the next step is the prompt cache and a bigger gold set.
+- **Swift and Apple-platform code:** I've studied Swift, but nothing in this repo is native app code.
 - **The preference log and an adapter trained on it,** which are designed but not built.

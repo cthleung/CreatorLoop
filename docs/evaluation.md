@@ -48,9 +48,9 @@ A single run of the blind test only tells you what happened once, so I ran it li
 Honestly, the result I learned the most from wasn't the headline. Both briefs flagged 1 of my approved lines in all 10 runs, so neither one passed my zero-false-alarm bar. When I went back to rule on it, the readers were partly right: I kept the first sentence as a pass and turned the second into a must-fail line. The catch gap looks big too, but McNemar only had 3 disagreeing lines to work with, which can't get below p = 0.25 however they fall, so this gold set is too small to prove the calibrated brief is better. It needs more must-fail lines, not more runs, since the runs barely disagreed with each other.
 
 Still missing:
-- **More must-fail lines.** All 14 are signed off, but 14 is too few for a real difference to show up (the McNemar point above).
-- **Score history.** Every rerun goes in `evals/results/` from now on, so there's a trend to look at.
-- **Product-level numbers.** Once the preference log from [taste-memory.md](taste-memory.md) exists, a few come almost for free - how often I pick the AI's recommended option, how much I edit a line after approving it, and whether the same correction keeps coming back. That last one is the number I'd actually watch, because the whole point is to stop saying the same thing twice.
+- **More must-fail lines:** All 14 are signed off, but 14 is too few for a real difference to show up (the McNemar point above).
+- **Score history:** Every rerun goes in `evals/results/` from now on, so there's a trend to look at.
+- **Product-level numbers:** Once the preference log from [taste-memory.md](taste-memory.md) exists, a few come almost for free - how often I pick the AI's recommended option, how much I edit a line after approving it, and whether the same correction keeps coming back. That last one is the number I'd actually watch, because the whole point is to stop saying the same thing twice.
 
 ## Why this matters beyond my novel
 
