@@ -33,7 +33,7 @@ The voice reader (the "ear") is a model, so it can't really be unit tested like 
 
 The test script shuffles the lines with a fixed seed (so reruns are comparable), strips the answers, and hands the reader a blind file. Scoring then separates false alarms, misses, and catches flagged under the wrong register. It also picks out the held-out lines, the ones that never appear in the reader's own instructions, since a reader that passes only the lines it's already been shown has memorized them, and that's not the same as understanding them.
 
-The gold set has 48 lines today, with 28 that must pass, 14 that must fail and 6 unruled. In fairness, the AI proposed the 14 failing lines, but I've gone through and signed off on every one, so the whole benchmark is mine now. Whenever I overrule the reader on a real draft, the line goes into the gold set, so the same mistake gets caught next time.
+The gold set has 49 lines today, with 28 that must pass, 15 that must fail and 6 unruled. In fairness, the AI proposed 14 of the failing lines, but I've gone through and signed off on every one (the 15th came from my own ruling, below), so the benchmark is all mine now. Whenever I overrule the reader on a real draft, the line goes into the gold set, so the same mistake gets caught next time.
 
 ## Treating the reader like the noisy model it is
 
@@ -45,7 +45,7 @@ A single run of the blind test only tells you what happened once, so I ran it li
 | Catches (14 must-fail lines) | 87%, 95% interval 69% to 100% | 67%, 95% interval 43% to 89% |
 | Lines that flipped between runs | 2 of 42 | 3 of 42 |
 
-Honestly, the result I learned the most from wasn't the headline. Both briefs flagged 1 of my approved lines in all 10 runs, so neither one passes my zero-false-alarm bar yet, and that line now needs a ruling from me. The catch gap looks big too, but McNemar only had 3 disagreeing lines to work with, which can't get below p = 0.25 however they fall, so this gold set is too small to prove the calibrated brief is better. It needs more must-fail lines, not more runs, since the runs barely disagreed with each other.
+Honestly, the result I learned the most from wasn't the headline. Both briefs flagged 1 of my approved lines in all 10 runs, so neither one passed my zero-false-alarm bar. When I went back to rule on it, the readers were partly right: I kept the first sentence as a pass and turned the second into a must-fail line. The catch gap looks big too, but McNemar only had 3 disagreeing lines to work with, which can't get below p = 0.25 however they fall, so this gold set is too small to prove the calibrated brief is better. It needs more must-fail lines, not more runs, since the runs barely disagreed with each other.
 
 Still missing:
 - **More must-fail lines.** All 14 are signed off, but 14 is too few for a real difference to show up (the McNemar point above).

@@ -26,7 +26,7 @@ McNemar on majority verdicts:
 
 ## What it says
 
-- **Both briefs failed the zero-false-alarm bar, on the same line.** P23 got flagged in all 10 runs. So either my brief needs to learn that line is fine, or my pass label on it is wrong. That's a ruling I owe the gold set, and honestly it's the most useful thing this run found, because a fix would've quietly sanded that line down.
+- **Both briefs failed the zero-false-alarm bar, on the same line.** P23 got flagged in all 10 runs. So either my brief needed to learn that line was fine, or my pass label on it was wrong. I ruled on it after the run, and the answer was a bit of both. P23 was 2 sentences, and I kept the first ("Still performing, even with the rest of her gone numb." is her voice) as a must-pass, while the second, which states the theme as a paradox, became a must-fail line, F15. Honestly it's the most useful thing this run found, because without the gold set I'd never have looked at that sentence again.
 - **The calibrated brief catches more, but this gold set is too small to prove it.** 87% against 67% looks like a big gap, but McNemar only counts the lines where the 2 briefs disagree, and there were just 3 of those. A 3-to-0 split can't get below p = 0.25 however you slice it. It takes at least 6 lines going one way with none the other way to get under 0.05, so the fix is more must-fail lines, not more runs.
 - **Run-to-run noise was small.** Only 2 or 3 of the 42 scored lines ever changed verdict, so 5 runs per brief was probably plenty for this test.
 - **My assumption about generic judges was wrong.** I really expected a plainness judge to flag lots of the grand, strange lines I'd approved, and it didn't (5% against 4%). Its weakness was the other way round - it just let more of the bad lines through.
@@ -48,6 +48,6 @@ python3 tools/eval_stats.py run/key.json --a A1.md A2.md A3.md A4.md A5.md --b B
 
 ## Next
 
-1. Rule on P23. (The 14 must-fail lines are signed off.)
+1. Rerun on the updated set, with P23 split into a must-pass and a new must-fail line, F15. (The numbers above are on the set as it stood for this run.)
 2. Grow the must-fail set until a real difference has room to show up.
 3. Rerun, and keep each run's results in this folder.
