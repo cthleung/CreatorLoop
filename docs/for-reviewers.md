@@ -4,7 +4,13 @@ If you're hiring for an ML role on creative tools, this page is pretty much the 
 
 ## Shipping reliable, tested code
 
-I've worked full time as a software engineer for 3 years, most recently building AI tooling at a large bank, including the tool layer an assistant calls and a personal-memory service I originally wrote. That work isn't public, but here's what is.
+I've worked full time as a software engineer for 3 years, most recently building AI tooling at a large bank. That work isn't public, so here's the short version first.
+- **Deploying an ML model to production GPUs.** I deployed a PII-detection NER model to our internal inference platform (NVIDIA Triton, on H100s) and wrote nearly all of that repo, CI/CD included: deploys across pre-production environments, signed release bundles, container image scanning, and a config-only deploy so a tuning run didn't need a full rebuild.
+- **Tuning it like an experiment.** Each phase changed 1 variable (batch size, queue delay, pod count, GPU split, CPU allocation) against a recorded baseline, and every table in the write-up ended with a verdict. 2 pods splitting 1 GPU beat 1 pod with a full GPU, for the same GPU budget, with 21 to 31 times lower latency and 55 to 58% more throughput at typical load. At extreme load, though, throughput dropped by about a quarter, and I wrote that down just as plainly as the win, since anyone picking that config should know.
+- **Rolling it out safely.** A feature toggle across the shared protocol library, the gateway and the worker, with the worker falling back to the existing path if the new inference service was down.
+- **Ownership.** I wrote the first version of a backend memory service and became its largest contributor, and I'm the largest individual contributor on the tool server our AI assistant talks to. I ship in small PRs, several a day when the work allows, because a change that's reviewable in one sitting is a change I'd want to inherit.
+
+And here's what's public.
 - [`tools/`](../tools/) with [48 tests](../tests/) that run on Linux, macOS and Windows on every push. The scanner refuses to save if its labels don't strip back to the original text byte for byte.
 - [worktree-handoff](https://github.com/cthleung/worktree-handoff), a plugin I spun off from this setup, with its own cross-platform test suite and guards against overwriting work it didn't expect.
 
@@ -20,7 +26,7 @@ That's honestly the entire repo, but the clearest pieces are probably these.
 
 The [first repeated-run experiment](../evals/results/2026-11-03-calibrated-vs-generic.md) compares my calibrated voice reader against a generic judge, blind, 5 runs each, with bootstrap intervals and an exact McNemar test. The result I'm proudest of is, oddly, the boring one - the calibrated brief caught 87% of the bad lines against 67%, and I still can't claim it's better, because only 3 lines separated them and that can't get below p = 0.25. The write-up says why, and what it'd take to find out (more must-fail lines, not more runs).
 
-That being said, 2 smaller habits show up elsewhere too. When I deployed my own model, I set a latency target first (under 8 seconds to the first token) and measured against it. And when a benchmark claimed my new GPU had doubled the prompt speed, a later check found the requests had been hitting the old one the whole time, so I just don't trust a speedup until I know which machine answered.
+That being said, the same habit shows up elsewhere too. At work, I tuned the GPU deployment above one variable at a time against a baseline. When I deployed my own model, I set a latency target first (under 8 seconds to the first token) and measured against it. And when a benchmark claimed my new GPU had doubled the prompt speed, a later check found the requests had been hitting the old one the whole time, so I just don't trust a speedup until I know which machine answered.
 
 ## Product sense: is this the right experience?
 

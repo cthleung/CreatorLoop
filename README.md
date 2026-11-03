@@ -15,7 +15,7 @@ The [replay](https://cthleung.github.io/CreatorLoop/demo/) of 1 real scene (left
 
 If you're looking at this for an ML role on creative tools, here's the short version, and [for-reviewers.md](docs/for-reviewers.md) has the long one with links for every point:
 
-- **Shipping tested code.** 3 years full time as a software engineer building AI tooling, plus the [tools](tools/) here with 48 tests running on 3 operating systems.
+- **Shipping tested code.** 3 years full time as a software engineer building AI tooling at a large bank, including deploying a PII-detection NER model on H100s and tuning it for 21 to 31 times lower latency at typical load. Plus the [tools](tools/) here, with 48 tests running on 3 operating systems.
 - **LLMs on a real project.** Agents, evals, a self-hosted fine-tune, an on-device run with MLX and a plan for personal adapters, all built around a novel I'm actually writing.
 - **Experimental design.** A [blind, repeated-run comparison](evals/results/2026-11-03-calibrated-vs-generic.md) of 2 reviewer briefs, with bootstrap intervals and McNemar - and an honest read of why the gold set's still too small to call it.
 - **Product sense.** I [ditched a model that wrote better prose](docs/model-experiments.md), because a 2-minute cold start is the wrong experience for someone mid-scene.
