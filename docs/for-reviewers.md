@@ -2,9 +2,9 @@
 
 If you're hiring for an ML role on creative tools, this page is pretty much the shortcut. It goes through what those roles tend to ask for, in roughly the order they ask, and points at the evidence in this repo for each one. Where the evidence lives outside the repo (my day job, mostly), I've just said so, and the last section is an honest list of what I'm still building toward.
 
-## How I built these repos
+## How I build
 
-Both repos were built with coding agents, mostly Claude Code, and I'd rather just say so up front. The agent did most of the typing, code and first drafts of docs alike (the docs then go through a voice check I built against my own writing samples, so they still sound like me). That check's there for the same reason as the novel's scanners, since I know how I want my writing to sound, and I'd hardly be hiding the AI on a page that tells you about it. **The problems, the rules, the picks and every merge were mine.** [Section 9 of worktree-handoff's engineering page](https://github.com/cthleung/worktree-handoff/blob/main/docs/how-i-engineer.md#9-working-with-a-coding-agent) has the stories of where the checks caught the agent, and honestly, building with agents every day is where a lot of my opinions about creator tools come from.
+I build with coding agents, mostly Claude Code, in the same loop I write the novel in: I set the problem and what done means, the agent drafts, and tests and my own review decide what goes in. [Section 9 of worktree-handoff's engineering page](https://github.com/cthleung/worktree-handoff/blob/main/docs/how-i-engineer.md#9-working-with-a-coding-agent) has the stories of where those checks caught something, and honestly, building with agents every day is where a lot of my opinions about creator tools come from.
 
 ## Shipping reliable, tested code
 
